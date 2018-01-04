@@ -136,10 +136,10 @@ export default {
       if ( !this.username || !this.password ) {
         return this.$alert( '帐号和密码不能为空');
       }
-      this.$http.get('login', {params:{
+      this.$http('login', {
         username:this.username, 
         password:this.password 
-      }})
+      })
       // 验证数据获取状态
       .then(resp=>{
         console.log(resp);
