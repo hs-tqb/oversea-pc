@@ -79,7 +79,7 @@
           <h3>商家登录</h3>
           <el-input
             placeholder="用户名/手机号"
-            maxlength="11"
+            :maxlength="11"
             v-model.trim="username"
             clearable>
           </el-input>
@@ -112,7 +112,7 @@
         <div id="qrcode">
           <img src="~assets/img/login/qrcode.png" alt="">
           <br/>关注“天气宝”微信公众号
-          <br/>邮箱：bd@utianqi.com {{word}}
+          <br/>邮箱：bd@utianqi.com
         </div>
       </div>
     </div>
