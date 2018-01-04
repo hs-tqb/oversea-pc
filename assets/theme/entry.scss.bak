@@ -1,0 +1,6 @@
+@import "~assets/theme/custom.scss";
+
+/* 改变 icon 字体路径变量，必需 */
+$--font-path: 'https://unpkg.com/element-ui@2.0.8/lib/theme-chalk/fonts';
+
+@import "~element-ui/packages/theme-chalk/src/index.scss";

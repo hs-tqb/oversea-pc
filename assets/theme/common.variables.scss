@@ -1,0 +1,28 @@
+@charset "utf-8";
+// main color
+$--color-white: #fff !default;
+$--color-black: #000 !default;
+$--color-success: #19d26a !default;
+$--color-warning: #f3ae10 !default;
+$--color-danger: #f35610 !default;
+$--color-info: #909399 !default;
+
+$--color-text-primary: #333 !default;
+$--color-text-regular: #666 !default;
+$--color-text-secondary: #909399 !default;
+$--color-text-placeholder: #ddd !default;
+
+// link
+$--link-color: #0c7eff !default;
+
+// font
+$--font-color-disabled-base: #f5f5f5 !default;
+
+// border
+$--border-color-base: #ddd !default;
+
+/* Menu
+--------------------------*/
+// $--menu-item-color: red !default;
+$--cs--menu-item-fill:#04384f !default;
+$--cs--menu-item-hover-fill: $--link-hover-color !default;
