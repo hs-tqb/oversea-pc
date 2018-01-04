@@ -136,7 +136,7 @@ export default {
       if ( !this.username || !this.password ) {
         return this.$alert( '帐号和密码不能为空');
       }
-      this.$http.post('login', {
+      this.$http('login', {
         username:this.username, 
         password:this.password 
       })
