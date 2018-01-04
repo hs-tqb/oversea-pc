@@ -40,7 +40,14 @@ module.exports = {
   /*
   ** Build configuration
   */
+  env: {
+    PATH_TYPE: process.env.PATH_TYPE
+  },
+  // generate: {
+  //   dir:'seller2'
+  // },
   build: {
+    // publicPath:'/seller2/_nuxt/',
     extractCSS:true,  // 打包css
     vendor: ['axios', 'element-ui'],
     babel: {
@@ -55,33 +62,6 @@ module.exports = {
       ]]],
       comments: false
     },
-    // loaders:[
-    //   {
-    //     test: /\.css$/,
-    //     loader: 'vue-style-loader!css-loader'
-    //   },
-    //   {
-    //     test: /\.(png|jpe?g|gif|svg)$/,
-    //     loader: 'url-loader',
-    //     query: {
-    //       limit: 1000, // 1KO
-    //       name: 'img/[name].[hash:7].[ext]'
-    //     }
-    //   },
-    //   {
-    //     test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
-    //     loader: 'url-loader',
-    //     query: {
-    //       limit: 1000, // 1 KO
-    //       name: 'fonts/[name].[hash:7].[ext]'
-    //     }
-    //   }
-    // ],
-    // postcss: [
-    //   require('autoprefixer')({
-    //     browsers: ['last 3 versions']
-    //   })
-    // ]
     /*
     ** Run ESLint on save
     */

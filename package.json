@@ -5,8 +5,8 @@
   "author": "'hs' <huangshuai@utianqi.com>",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"nodemon ./mock_server/server.js\" \"nuxt\"",
-    "test": "PATH nuxt",
+    "dev": "cross-env PATH_TYPE=development concurrently \"nodemon ./mock_server/server.js\" \"nuxt\"",
+    "test": "cross-env PATH_TYPE=test nuxt",
     "build": "nuxt build",
     "start": "nuxt start",
     "generate": "nuxt generate",
