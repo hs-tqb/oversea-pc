@@ -810,14 +810,14 @@ export default {
         this.gotoStep( this.process.index + 1 );
       } else if (name === 'confirm') {
         let couponCode   = this.coupon.isCollapsed? '': (this.coupon.state === 'success'? this.coupon.code: '');
-        this.$http.post('addOrder', {params:{
+        this.$http.post('addOrder', {
           mid:'pc',
           contractId : this.contractInfo.contractId,
           orderPrice : this.computedPaymentFee,
           couponCode : couponCode,
           insuredInfo: `${this.insured.name}:${this.insured.mobile}`,
           mobile     : this.insured.mobile
-        }})
+        })
           .then(resp=>{
             if ( resp.data.state !== 1 ) {
               this.$alert(resp.data.message, '下单失败');
@@ -921,7 +921,7 @@ export default {
             this.contractInfo = { message:'行程信息有误, 请核实' }: 
             undefined;
       }
-      this.$http.post('getContract', { params: {key:1} })
+      this.$http.post('getContract', {key:1} )
         .then(resp=>{
           if ( resp.data.state !== 1 ) {
             throw resp.data.message;
@@ -977,9 +977,7 @@ export default {
       this.coupon.checking = true;
       this.coupon.code     = this.coupon.input;
 
-      this.$http.post('findCoupons', {
-        params:{ mobile, coupons, productId }
-      })
+      this.$http.post('findCoupons', { mobile, coupons, productId })
         .then(resp=>{
           console.log( resp )
           if ( resp.data.state !==1 ) {
@@ -1009,11 +1007,11 @@ export default {
     },
     wxpay() {
       this.wxPaymentDialog = true;
-      this.$http.post('PAY_WECHAT', {params:{
+      this.$http.post('PAY_WECHAT', {
           outTradeNo: this.orderInfo.outTradeNo,
           totalFee  : this.orderInfo.totalFee,
           body      : '晴空万里宝'
-        }})
+        })
         .then(resp=>{
           this.payment.wechat.qrcode = resp.data.data.code_url;
           this.$nextTick(()=>{
@@ -1031,13 +1029,13 @@ export default {
         })
     },
     alipay() {
-      this.$http.post('PAY_ALIPAY', {params:{
+      this.$http.post('PAY_ALIPAY', {
         outTradeNo  : this.orderInfo.outTradeNo,
         totalAmount : this.orderInfo.totalFee,
         subject     : '晴空万里宝',
         // returnUrl   : location.origin+location.pathname.replace(/\/[\w\-]+\.html$/, '/pay-successfully')
         returnUrl  : 'http://www.baidu.com'
-      }})
+      })
         .then(resp=>{
           var div = document.createElement('div');
           document.body.appendChild(div);
@@ -1089,7 +1087,7 @@ export default {
   mounted() {
     // this.loadContractInfo()
     // 读取城市数据
-    this.$http.post('getCitys')
+    this.$http.post('getCitys', {key:'value'})
       .then(resp=>{
         if ( resp.data.state !== 1 ) {
           this.cityOptions = [{ value:-1, label:'城市数据加载失败', disabled:true }];

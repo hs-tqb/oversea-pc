@@ -137,19 +137,17 @@ export default {
         return this.$alert( '帐号和密码不能为空');
       }
       this.$http.post('login', {
-        params:{ 
-          username:this.username, 
-          password:this.password 
-        }
+        username:this.username, 
+        password:this.password 
       })
       // 验证数据获取状态
       .then(resp=>{
         console.log(resp);
-        if ( resp.data.state !== 1 ) {
-          this.$alert( resp.data.message, '登录失败' );
-          throw resp.data.message;
+        if ( resp.state !== 1 ) {
+          this.$alert( resp.message, '登录失败' );
+          throw resp.message;
         }
-        return resp.data.data;
+        return resp.data;
       })
       // 验证审核状态
       .then(data=>{
@@ -161,23 +159,6 @@ export default {
       })
       // 存储数据并跳转
       .then(data=>{
-        // 保存token
-        // this.$store.commit('storeToken', data.token);
-        // localStorage.setItem('token', data.tqbToken);
-        // 审核状态
-        // localStorage.setItem('accountStatus', data.verifyState);
-        // 商户信息
-        // localStorage.setItem('merchantId', data.merchantId);
-        // localStorage.setItem('merchantState', data.merchantState);
-        // 产品信息: id/最小购买天数/最大购买天数/展示未来几个月/禁止购买的时间范围
-        // let production = data.productList[0];
-        // localStorage.setItem('production', JSON.stringify(production));
-        // localStorage.setItem('productId', production.productId);
-        // localStorage.setItem('leastDays', production.leastDays);
-        // localStorage.setItem('maxBuyDays', production.maxBuyDays);
-        // localStorage.setItem('showMonths', production.showMonths);
-        // localStorage.setItem('acceptableDays', production.acceptableDays);
-
         this.$store.commit('saveMerchantInfo', {
           verifyState  : data.verifyState,
           merchantId   : data.merchantId,
@@ -185,7 +166,6 @@ export default {
         })
         this.$store.commit('saveToken', data.token);
         this.$store.commit('saveProduction', data.productList[0]);
-
         this.$router.push('/');
       })
     }
