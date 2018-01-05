@@ -137,7 +137,7 @@ export default {
         return this.$alert( '帐号和密码不能为空');
       }
       this.$http.post('login', {
-        username:this.username, 
+        userName:this.username, 
         password:this.password 
       })
       // 验证数据获取状态
