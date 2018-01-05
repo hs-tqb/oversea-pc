@@ -165,8 +165,11 @@ export default {
         })
         this.$store.commit('saveToken', data.token);
         this.$store.commit('saveProduction', data.productList[0]);
-        // this.$router.push('/');
-        location.back();
+        if ( history.length ) {
+          history.back();
+        } else {
+          this.$router.push('/');
+        }
       })
     }
   },
