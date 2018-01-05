@@ -816,10 +816,10 @@ export default {
       }
 
       // mock
-      ,contractInfo: {"threshold": "10","contractId": "167812121","payoutRuleParam": "1:2|2:3","maxPayoutAmount": 12000}
-      ,travel:JSON.parse('[{"date":"2018-01-05","city":["t2000","t2100","t2101"]},{"date":"2018-1-3","city":["t2000","t2100","t2101"]},{"date":"2018-1-4","city":["t2000","t2100","t2101"]}]')
-      ,tarrifs:JSON.parse('{"tarrif":10,"custom":10,"data":[10,20,50,100]}')
-      ,insured:JSON.parse('{"name":"名字","mobile":"13131313131"}')
+      // ,contractInfo: {"threshold": "10","contractId": "167812121","payoutRuleParam": "1:2|2:3","maxPayoutAmount": 12000}
+      // ,travel:JSON.parse('[{"date":"2018-01-05","city":["t2000","t2100","t2101"]},{"date":"2018-1-3","city":["t2000","t2100","t2101"]},{"date":"2018-1-4","city":["t2000","t2100","t2101"]}]')
+      // ,tarrifs:JSON.parse('{"tarrif":10,"custom":10,"data":[10,20,50,100]}')
+      // ,insured:JSON.parse('{"name":"名字","mobile":"13131313131"}')
     }
   }, 
   computed: {
