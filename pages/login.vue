@@ -136,7 +136,7 @@ export default {
       if ( !this.username || !this.password ) {
         return this.$alert( '帐号和密码不能为空');
       }
-      this.$http.post('/sellerCommon/login', {
+      this.$http.get('login', {
         username:this.username, 
         password:this.password 
       })
@@ -174,6 +174,9 @@ export default {
       this.username = '15914094691';
       this.password = '111111';
     }
+
+    this.$http.get('login', { params:{key:'value'} });
+    this.$http.post('login', { key2:'value2' })
   }
 }
 </script>

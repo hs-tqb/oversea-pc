@@ -5,29 +5,38 @@ import env  from '~/env.config'
 import { Message } from 'element-ui'
 
 // axios.defaults.baseURL = env.baseURL;
-
+let baseURL = env.baseURL;
 let instance = axios.create({
-  baseURL:env.baseURL,
+  // baseURL:baseURL,
   // 请求数据修改
   transformRequest: [
-    function (data={}) {
-      try {
-        data.token = localStorage.getItem('token')
-      } catch (e) {
-      }
-      return qs.stringify(data);
-    }
+    data=>qs.stringify(data)
   ],
-  // 响应数据修改
-  // transformResponse: [function (resp) {
-  //   return resp;
-  // }]
+});
+
+let method, data, params;
+instance.interceptors.request.use(httpRequest =>{
+  method = httpRequest.method;
+  data   = httpRequest.data;
+  params = httpRequest.params;
+  try {
+    if ( method === 'get' ) {
+      params.token = localStorage.getItem('token');
+    } else if ( method === 'post' ) {
+      data.token = localStorage.getItem('token');
+    }
+    httpRequest.url = baseURL + apis[httpRequest.url];
+  } catch(err) {
+  } finally {
+    return httpRequest;
+  }
 });
 
 
 // http响应拦截器
 let respData, errorCode, message;
-instance.interceptors.response.use(httpResponse =>{
+instance.interceptors.response.use(
+  httpResponse=>{
     respData  = httpResponse.data;
     errorCode = respData.errorCode;
     message   = '';
@@ -49,12 +58,14 @@ instance.interceptors.response.use(httpResponse =>{
       });
     }
     return respData;
-  }, error => {
-    loadinginstace.close()
+  }, 
+  error=>{
     Message.error({
-    message: error
-  })
-  return Promise.reject(error)
- })
+      message: error.toString()
+    })
+    return Promise.reject(error)
+  }
+);
+
 
 export default instance;
