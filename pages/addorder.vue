@@ -432,82 +432,90 @@
             <h3>保障计划</h3>
             <p>每次修改旅行时间和目的地，保障计划都会实时更新</p>
           </div>
-          <!-- :data="[contractInfo]" -->
-          <div class="payout-preview">
-            <table>
-              <thead>
-                <tr>
-                  <td>
-                    最高保障金额
-                    <el-popover trigger="click" placement="top" popper-class="payout-popup">
-                      <el-alert
-                        title="消息提示的文案"
-                        type="info"
-                        description="文字说明文字说明文字说明文字说明文字说明文字说明"
-                        :closable="false"
-                        show-icon>
-                      </el-alert>
-                      <span slot="reference"><i class="el-icon-question"></i></span>
-                    </el-popover>
-                  </td>
-                  <td>
-                    触发标准
-                    <el-popover trigger="hover" placement="top" popper-class="payout-popup">
-                      <el-alert
-                        title="消息提示的文案"
-                        type="info"
-                        description="文字说明文字说明文字说明文字说明文字说明文字说明"
-                        :closable="false"
-                        show-icon>
-                      </el-alert>
-                      <span slot="reference"><i class="el-icon-question"></i></span>
-                    </el-popover>
-                  </td>
-                </tr>
-              </thead>
-              <tbody class="huge danger">
-                <tr>
-                  <td>{{contractInfo.maxPayoutAmount? `￥${ computedPayoutRule[computedPayoutRule.length-1].fee }`:''}}</td>
-                  <td>{{contractInfo.threshold? `> ${contractInfo.threshold} mm`:''}}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <div class="date">
-            <h4>保障时间</h4>
-            <p class="huge">{{formatDate(travel[0].date)}} - {{formatDate(travel[travel.length-1].date)}}</p>
-          </div>
-          <div class="city">
-            <h4>保障目的地个数</h4>
-            <p class="huge">
-              <span>{{travel.length}}</span>
-              {{computedCities.map(c=>c.label).join('、')}}
-            </p>
-          </div>
-          <div class="explain">
-            <h3>赔付标准</h3>
-            <p>旅游行程中只要当天降水量超过触发标准，就认为这天触发。具体触发天数和赔付金额对应如下表。</p>
-          </div>
-          <div class="payout-standard">
-            <table>
-              <thead>
-                <tr>
-                  <td>触发天数</td>
-                  <td>赔付金额</td>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="(p,i) in computedPayoutRule">
-                  <td>{{p.day}}</td>
-                  <td>{{p.fee}}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <div class="payout-explain">
-            <p>最终赔付金额以行程中天气实况所达到的最大触发天数为准</p>
-            <p v-for=""></p>
-          </div>
+          <template v-if="contractInfo.loading">
+            <div>111</div>
+          </template>
+          <template v-else-if="!contractInfo.threshold">
+            <div>222</div>
+          </template>
+          <template v-else>
+            <!-- :data="[contractInfo]" -->
+            <div class="payout-preview">
+              <table>
+                <thead>
+                  <tr>
+                    <td>
+                      最高保障金额
+                      <el-popover trigger="click" placement="top" popper-class="payout-popup">
+                        <el-alert
+                          title="消息提示的文案"
+                          type="info"
+                          description="文字说明文字说明文字说明文字说明文字说明文字说明"
+                          :closable="false"
+                          show-icon>
+                        </el-alert>
+                        <span slot="reference"><i class="el-icon-question"></i></span>
+                      </el-popover>
+                    </td>
+                    <td>
+                      触发标准
+                      <el-popover trigger="hover" placement="top" popper-class="payout-popup">
+                        <el-alert
+                          title="消息提示的文案"
+                          type="info"
+                          description="文字说明文字说明文字说明文字说明文字说明文字说明"
+                          :closable="false"
+                          show-icon>
+                        </el-alert>
+                        <span slot="reference"><i class="el-icon-question"></i></span>
+                      </el-popover>
+                    </td>
+                  </tr>
+                </thead>
+                <tbody class="huge danger">
+                  <tr>
+                    <td>{{contractInfo.maxPayoutAmount? `￥${ computedPayoutRule[computedPayoutRule.length-1].fee }`:''}}</td>
+                    <td>{{contractInfo.threshold? `> ${contractInfo.threshold} mm`:''}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="date">
+              <h4>保障时间</h4>
+              <p class="huge">{{formatDate(travel[0].date)}} - {{formatDate(travel[travel.length-1].date)}}</p>
+            </div>
+            <div class="city">
+              <h4>保障目的地个数</h4>
+              <p class="huge">
+                <span>{{travel.length}}</span>
+                {{computedCities.map(c=>c.label).join('、')}}
+              </p>
+            </div>
+            <div class="explain">
+              <h3>赔付标准</h3>
+              <p>旅游行程中只要当天降水量超过触发标准，就认为这天触发。具体触发天数和赔付金额对应如下表。</p>
+            </div>
+            <div class="payout-standard">
+              <table>
+                <thead>
+                  <tr>
+                    <td>触发天数</td>
+                    <td>赔付金额</td>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(p,i) in computedPayoutRule">
+                    <td>{{p.day}}</td>
+                    <td>{{p.fee}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="payout-explain">
+              <p>最终赔付金额以行程中天气实况所达到的最大触发天数为准</p>
+              <p v-for=""></p>
+            </div>
+          </template>
         </div>
       </div>
       <div v-if="process.name==='payment'" id="payment" class="step-panel">
@@ -729,7 +737,7 @@ export default {
         { date:'', city:[] }
       ],
       // 合约详情
-      contractInfo: {},
+      contractInfo: { loading:true },
       orderInfo   : {},
       // 资费选择
       tarrifs: {
@@ -819,12 +827,12 @@ export default {
           mobile     : this.insured.mobile
         })
           .then(resp=>{
-            if ( resp.data.state !== 1 ) {
-              this.$alert(resp.data.message, '下单失败');
-              throw resp.data.message;
+            if ( resp.state !== 1 ) {
+              this.$alert(resp.message, '下单失败');
+              throw resp.message;
             }
-            this.orderInfo = resp.data.data;
-            if ( resp.data.data.immediatePay === 1 ) {
+            this.orderInfo = resp.data;
+            if ( resp.data.immediatePay === 1 ) {
               this.paymentDialog = true;
               this.$nextTick(()=>{
                 CountDown.closeBySign('tqbPaymentCountdown');
@@ -915,6 +923,8 @@ export default {
       return n>9? n: '0'+n;
     },
     loadContractInfo() {
+      this.contractInfo.loading = true;
+      console.log( this.contractInfo.loading )
       // 如果没有填满, 则不获取订单
       if ( !this.travel.every(d=>d.date&&d.city&&d.city.length) ) {
         return this.contractInfo? 
@@ -923,13 +933,15 @@ export default {
       }
       this.$http.post('getContract', {key:1} )
         .then(resp=>{
-          if ( resp.data.state !== 1 ) {
-            throw resp.data.message;
+          if ( resp.state !== 1 ) {
+            throw resp.message;
           }
-          return resp.data.data;
+          return resp.data;
         })
         .then(data=>{
-          this.contractInfo = data;
+          setTimeout(()=>{
+            this.contractInfo = data;
+          }, 3000);
         })
         .catch(err=>{
           this.contractInfo = { message:err }
@@ -980,10 +992,10 @@ export default {
       this.$http.post('findCoupons', { mobile, coupons, productId })
         .then(resp=>{
           console.log( resp )
-          if ( resp.data.state !==1 ) {
+          if ( resp.state !==1 ) {
             throw '错误'
           }
-          let data = resp.data.data;
+          let data = resp.data;
           if ( data && data.discountAmount ) {
             this.coupon.state = 'success';
           } else {
@@ -1013,7 +1025,7 @@ export default {
           body      : '晴空万里宝'
         })
         .then(resp=>{
-          this.payment.wechat.qrcode = resp.data.data.code_url;
+          this.payment.wechat.qrcode = resp.data.code_url;
           this.$nextTick(()=>{
             CountDown.closeBySign('wxQrcodeLifeCycle');
             CountDown.openTimeCountBySeconds({
@@ -1072,7 +1084,7 @@ export default {
             return console.log('....');
           }
           console.log( resp.data.data.payState )
-          if ( resp.data.data.payState === 1 ) {
+          if ( resp.data.payState === 1 ) {
             this.paymentDialog   = false;
             this.wxPaymentDialog = false;
             this.payment.state   = 'success';
@@ -1087,13 +1099,19 @@ export default {
   mounted() {
     // this.loadContractInfo()
     // 读取城市数据
-    this.$http.post('getCitys', {key:'value'})
+    this.$http.post('sellerCity/getCitys')
+    //  this.$http({
+    //     // 设置请求可以携带cookie
+    //     withCredentials: true,
+    //     method: "post",
+    //     url: "http://ts.baotianqi.cn/sellerCity/getData"
+    //   })
       .then(resp=>{
-        if ( resp.data.state !== 1 ) {
+        if ( resp.state !== 1 ) {
           this.cityOptions = [{ value:-1, label:'城市数据加载失败', disabled:true }];
           throw '获取城市数据失败'
         }
-        return resp.data.data;
+        return resp.data;
       })
       .then(data=>{
         this.cityOptions = data.areaList.map(area=>{return { 

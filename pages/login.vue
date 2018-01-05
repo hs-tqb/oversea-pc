@@ -136,7 +136,7 @@ export default {
       if ( !this.username || !this.password ) {
         return this.$alert( '帐号和密码不能为空');
       }
-      this.$http.post('login', {
+      this.$http.post('/sellerCommon/login', {
         username:this.username, 
         password:this.password 
       })
@@ -144,7 +144,6 @@ export default {
       .then(resp=>{
         console.log(resp);
         if ( resp.state !== 1 ) {
-          this.$alert( resp.message, '登录失败' );
           throw resp.message;
         }
         return resp.data;
