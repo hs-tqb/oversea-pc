@@ -109,10 +109,32 @@
               .el-input-group { margin-left:24px; width:200px; 
                 input { text-align:center; }
               }
+              .row,
+              .custom { display:flex; flex-direction:row; }
+              .custom {
+                a { color:$--color-text-secondary; }
+                .el-input { 
+                  width:100px; 
+                  input { text-align:center; }
+                }
+              }
               .coupon {
                 .tips { margin:15px 0 5px 0; cursor:pointer; }
                 .el-input-group { margin:0; width:300px; }
               }
+              // 自定义的默认不显示
+              // .tarrif-custom {
+                // top:3px; 
+                // width:97px;
+                // // .el-input-group__prepend { height:36px; border-radius:4px; @include border('right'); cursor: pointer; }
+                // input { width:100px; }
+                // .el-input-group__prepend { background:transparent; border:0; }
+                // &.custom-disable {
+                //   // .el-input-group__prepend { border-top-right-radius: 0; border-bottom-right-radius: 0; border-right:0; }
+                //   // .el-input-group__prepend { border-radius:4px; @include border('right'); }
+                //   input { visibility: hidden; }
+                // }
+              // }
             }
             &.insured {
               .input-group { 
@@ -354,22 +376,28 @@
               <p>保费越多，保障金额越高，上限为￥10000</p>
             </div>
             <div>
-              <el-radio-group v-model="tarrifs.tarrif" size="medium" @change="changeTarrif">
-                <el-radio-button 
-                  v-for="(t,i) in tarrifs.data" 
-                  :v-key="`tarrif-${i}`"
-                  :label="t"
-                ></el-radio-button>
-              </el-radio-group>
-              <!-- <a href="javascript:void(0)">其它价格</a> -->
-              <el-input
-                :min="5" 
-                :max="200"
-                size="medium"
-                placeholder="5 ~ 200"
-                v-model="tarrifs.custom"
-                @change="changeTarrif($event,'isCustom')" 
-              ><template slot="prepend">其它价格</template></el-input>
+              <div class="row">
+                <el-radio-group v-model="tarrifs.tarrif" size="medium" @change="changeTarrif">
+                  <el-radio-button 
+                    v-for="(t,i) in tarrifs.data" 
+                    :v-key="`tarrif-${i}`"
+                    :label="t"
+                  ></el-radio-button>
+                </el-radio-group>
+                <div class="custom">
+                  <a href="javascript:void(0)" @click="tarrifs.custom.enable=!tarrifs.custom.enable">其它价格</a>
+                  <el-input
+                    v-if="tarrifs.custom.enable"
+                    :min="5" 
+                    :max="200"
+                    size="medium"
+                    placeholder="5 ~ 200"
+                    v-model="tarrifs.custom.value"
+                    :autofocus="true"
+                    @change="changeTarrif($event,'isCustom')" 
+                  ></el-input>
+                </div>
+              </div>
               <!-- 优惠券 -->
               <div class="coupon">
                 <p href="javascript:void(0)" 
@@ -427,16 +455,17 @@
           </div>
         </div>
         <div id="safeguard-border"></div>
-        <div id="safeguard-detail" class="panel">
+        <div id="safeguard-detail" class="panel" v-loading="contractInfo.loading">
           <div class="explain">
             <h3>保障计划</h3>
             <p>每次修改旅行时间和目的地，保障计划都会实时更新</p>
           </div>
-          <template v-if="contractInfo.loading">
-            <div>111</div>
-          </template>
-          <template v-else-if="!contractInfo.threshold">
-            <div>222</div>
+          <template v-if="!contractInfo.threshold">
+            <div>
+              <br>没有数据时的文案提示
+              <br>没有数据时的文案提示
+              <br>没有数据时的文案提示
+            </div>
           </template>
           <template v-else>
             <!-- :data="[contractInfo]" -->
@@ -737,12 +766,15 @@ export default {
         { date:'', city:[] }
       ],
       // 合约详情
-      contractInfo: { loading:true },
+      contractInfo: {},
       orderInfo   : {},
       // 资费选择
       tarrifs: {
         tarrif: 10,
-        custom: '',
+        custom: {
+          enable:false,
+          value  :'',
+        },
         data  : [10, 20, 50, 100]
       },
       coupon: {
@@ -784,9 +816,10 @@ export default {
       }
 
       // mock
-      // ,travel:JSON.parse('[{"date":"2018-01-05","city":["t2000","t2100","t2101"]},{"date":"2018-1-3","city":["t2000","t2100","t2101"]},{"date":"2018-1-4","city":["t2000","t2100","t2101"]}]')
-      // ,tarrifs:JSON.parse('{"tarrif":10,"custom":10,"data":[10,20,50,100]}')
-      // ,insured:JSON.parse('{"name":"名字","mobile":"13131313131"}')
+      ,contractInfo: {"threshold": "10","contractId": "167812121","payoutRuleParam": "1:2|2:3","maxPayoutAmount": 12000}
+      ,travel:JSON.parse('[{"date":"2018-01-05","city":["t2000","t2100","t2101"]},{"date":"2018-1-3","city":["t2000","t2100","t2101"]},{"date":"2018-1-4","city":["t2000","t2100","t2101"]}]')
+      ,tarrifs:JSON.parse('{"tarrif":10,"custom":10,"data":[10,20,50,100]}')
+      ,insured:JSON.parse('{"name":"名字","mobile":"13131313131"}')
     }
   }, 
   computed: {
@@ -812,8 +845,10 @@ export default {
         let text = '';
         if ( !this.contractInfo.threshold ) text = '订单信息有误';
         else if ( !this.insured.name || !this.insured.mobile ) text = '请填写用户信息';
+        else if ( !this.checkMobileValidity(this.insured.mobile) ) text = '手机号无效';
         if ( text ) {
-          return this.$alert(text, '提交失败');
+          this.$message.closeAll();
+          return this.$message.error('提交失败, '+text);
         }
         this.gotoStep( this.process.index + 1 );
       } else if (name === 'confirm') {
@@ -828,7 +863,6 @@ export default {
         })
           .then(resp=>{
             if ( resp.state !== 1 ) {
-              this.$alert(resp.message, '下单失败');
               throw resp.message;
             }
             this.orderInfo = resp.data;
@@ -923,35 +957,27 @@ export default {
       return n>9? n: '0'+n;
     },
     loadContractInfo() {
-      this.contractInfo.loading = true;
-      console.log( this.contractInfo.loading )
       // 如果没有填满, 则不获取订单
       if ( !this.travel.every(d=>d.date&&d.city&&d.city.length) ) {
+        return;
         return this.contractInfo? 
             this.contractInfo = { message:'行程信息有误, 请核实' }: 
             undefined;
       }
-      this.$http.post('getContract', {key:1} )
-        .then(resp=>{
-          if ( resp.state !== 1 ) {
-            throw resp.message;
-          }
-          return resp.data;
-        })
-        .then(data=>{
-          setTimeout(()=>{
-            this.contractInfo = data;
-          }, 3000);
-        })
-        .catch(err=>{
-          this.contractInfo = { message:err }
-        });
 
+      this.contractInfo.loading = true;
+
+      this.$http.post('getContract', {
+        productId:this.production.productId,
+        times: this.travel.map(t=>this.formatDate(t.date, {keepYear:true, separator:'-'})).join(','),
+        cityIds:this.computedCities.map(c=>c.value).join(','), 
+      })
+      .then(resp=>{ this.contractInfo = resp.state===1? resp.data: {}; });
     },
     changeTarrif(val, isCustom) {
       if ( !isCustom ) {
         this.tarrifs.tarrif = val;
-        this.tarrifs.custom = '';
+        this.tarrifs.custom.value = '';
       } else {
         val = parseInt(val, 10);
         if ( isNaN(val) ) {
@@ -962,9 +988,12 @@ export default {
           } else if ( val < 5 ) {
             val = 5;
           }
-          this.tarrifs.custom = val;
+          this.tarrifs.custom.value = val;
         }
       }
+    },
+    checkMobileValidity(n) {
+      return (/^1[345678]\d{9}$/).test(n);
     },
     checkCouponCode() {
       let mobile  = this.insured.mobile,
@@ -980,9 +1009,12 @@ export default {
         return 
       }
       else if ( !mobile ) text = '请先输入手机号'
+      else if ( !this.checkMobileValidity(mobile) ) text = '手机号码无效'
       else if ( !productId ) text = '请求出错, 请登录'
       if (text) {
-        return this.$alert(text);
+        this.$message.closeAll();
+        this.$message.error(text);
+        return;
       }
 
       if ( this.coupon.checking ) return;
