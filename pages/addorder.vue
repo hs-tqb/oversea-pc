@@ -1099,7 +1099,7 @@ export default {
   mounted() {
     // this.loadContractInfo()
     // 读取城市数据
-    this.$http.post('sellerCity/getCitys')
+    this.$http.post('getCitys')
     //  this.$http({
     //     // 设置请求可以携带cookie
     //     withCredentials: true,
