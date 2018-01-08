@@ -16,7 +16,13 @@ let instance = axios.create({
 });
 
 // 请求拦截
+let url = '';
 instance.interceptors.request.use(httpRequest =>{
+  url = apis[httpRequest.url];
+
+  // 对于外部请求, 不添加前缀, 也不加token参数
+  if ( url.indexOf('http') === 0 ) return httpRequest;
+
   if ( httpRequest.method === 'post' ) {
     ( httpRequest.data? httpRequest.data: (httpRequest.data={}) )
       .token = localStorage.getItem('token');
@@ -25,7 +31,7 @@ instance.interceptors.request.use(httpRequest =>{
     .token = localStorage.getItem('token');
   }
 
-  httpRequest.url = (apis[httpRequest.url].indexOf('http')===0? '': baseURL) + apis[httpRequest.url];
+  httpRequest.url = baseURL + url;
   return httpRequest;
 });
 
