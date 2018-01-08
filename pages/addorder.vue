@@ -1084,7 +1084,10 @@ export default {
         })
     },
     alipay() {
+      var newWin = window.open();
+
       let url = process.env.PATH_TYPE === 'development'? 'http://pay.baotianqi.cn/alipay/pay': 'PAY_ALIPAY';
+
       this.$http.post(url, {
         outTradeNo  : this.orderInfo.outTradeNo,
         totalAmount : this.orderInfo.totalFee,
@@ -1097,7 +1100,6 @@ export default {
           document.body.appendChild(div);
           div.innerHTML = data;
 
-          var newWin = window.open();
           newWin.location = 
               div.querySelector('form').getAttribute('action')
               +'&'+div.querySelector('input').name+'='
