@@ -839,11 +839,14 @@ export default {
     },
     computedPaymentFee() {
       return (
-        // 优先使用(展开的)自定义的价格
-        ( (this.tarrifs.custom.enable && this.tarrifs.custom.value) || (this.tarrifs.tarrif) ) *100
+        this.computedOrderPrice
         // 减去优惠金额
         - ( (this.coupon.isCollapsed? 0 : this.coupon.amount ) * 100 )
       );
+    },
+    computedOrderPrice() {
+      // 优先使用(展开的)自定义的价格
+      return ( (this.tarrifs.custom.enable && this.tarrifs.custom.value) || (this.tarrifs.tarrif) ) *100
     }
   },
   methods: {
