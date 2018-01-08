@@ -13,7 +13,8 @@
       &.sidebarCollapsed {
           width: calc( 100vw - 64px );
       }
-      overflow-x: auto;
+      // overflow-x: auto;
+      overflow:hidden;
       #layout-main { 
         width:100%;
         height:calc( 100vh - 50px );
