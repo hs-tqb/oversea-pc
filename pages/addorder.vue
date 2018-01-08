@@ -866,7 +866,7 @@ export default {
         this.$http.post('addOrder', {
           mid:'pc',
           contractId : this.contractInfo.contractId,
-          orderPrice : this.computedPaymentFee,
+          orderPrice : this.computedOrderPrice,
           couponCode : couponCode,
           insuredInfo: `${this.insured.name}:${this.insured.mobile}`,
           mobile     : this.insured.mobile
