@@ -75,108 +75,109 @@
         <el-button @click="loadDealList(true)">重置</el-button>
       </div>
     </div>
-    <el-table
-      stripe
-      highlight-current-row
-      :data="!!dealList? dealList.rows: []"
-      v-loading="dealListLoading"
-      :default-sort="{prop:'date', order:'descending'}"
-      @current-change="showOrderDetail"
-      >
-      <el-table-column
-        width="50"
-        label="序号">
-        <template scope="scope">
-          {{scope.$index+1}}
-        </template>
-      </el-table-column>
-      <el-table-column
-        prop="innerOrderId"
-        width="140"
-        label="订单号">
-      </el-table-column>
-      <el-table-column
-        prop="insuredMobile"
-        width="110"
-        label="被保人手机">
-      </el-table-column>
-      <el-table-column
-        prop="insuredNames"
-        width="100"
-        label="被保人姓名">
-      </el-table-column>
-      <el-table-column
-        prop="cityIds"
-        label="目的地">
-      </el-table-column>
-      <el-table-column
-        prop="orderPrice"
-        width="100"
-        :formatter="moneyFormatter"
-        label="订单金额"
-        sortable>
-      </el-table-column>
-      <el-table-column
-        prop="gmtCreate"
-        label="下单日期"
-        width="120"
-        :formatter="dateFormatter"
-        sortable>
-      </el-table-column>
-      <el-table-column
-        prop="minStime"
-        width="120"
-        label="保障开始日期"
-        sortable>
-      </el-table-column>
-      <el-table-column
-        prop="maxEtime"
-        width="120"
-        label="保障结束日期"
-        sortable>
-      </el-table-column>
-      <!-- order.payState == 1 ? '正常': '已取消' -->
-      <el-table-column
-        label="订单状态">
-        <template scope="scope">
-          <!-- <span :class="payStateParser(scope.row.payState)">
-            {{ payStateFormatter(scope.row.payState) }}
-          </span> -->
-          <el-tag :type="payStateParser(scope.row.payState)">
-            {{payStateFormatter(scope.row.payState)}}
-          </el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column
-        prop="realPayoutFee"
-        width="120"
-        :formatter="moneyFormatter"
-        label="已赔付金额(元)"
-        sortable>
-      </el-table-column>
-      <el-table-column
-        prop="payoutFee"
-        width="120"
-        :formatter="moneyFormatter"
-        label="应赔付金额(元)"
-        sortable>
-      </el-table-column>
-      <el-table-column
-        prop="dividedAmount"
-        width="120"
-        :formatter="moneyFormatter"
-        label="分成金额(元)"
-        sortable>
-      </el-table-column>
-      <el-table-column
-        label="操作">
-        <template scope="scope">
-          <el-button type="text" size="small">详情</el-button>
-          <el-button type="text" size="small">发送合约</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-
+    <div v-loading="dealListLoading">
+      <el-table
+        stripe
+        highlight-current-row
+        :data="!!dealList? dealList.rows: []"
+        :default-sort="{prop:'date', order:'descending'}"
+        @current-change="showOrderDetail"
+        >
+        <el-table-column
+          width="50"
+          label="序号">
+          <template scope="scope">
+            {{scope.$index+1}}
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="innerOrderId"
+          width="140"
+          label="订单号">
+        </el-table-column>
+        <el-table-column
+          prop="insuredMobile"
+          width="110"
+          label="被保人手机">
+        </el-table-column>
+        <el-table-column
+          prop="insuredNames"
+          width="100"
+          label="被保人姓名">
+        </el-table-column>
+        <el-table-column
+          prop="cityIds"
+          label="目的地">
+        </el-table-column>
+        <el-table-column
+          prop="orderPrice"
+          width="100"
+          :formatter="moneyFormatter"
+          label="订单金额"
+          sortable>
+        </el-table-column>
+        <el-table-column
+          prop="gmtCreate"
+          label="下单日期"
+          width="120"
+          :formatter="dateFormatter"
+          sortable>
+        </el-table-column>
+        <el-table-column
+          prop="minStime"
+          width="120"
+          label="保障开始日期"
+          sortable>
+        </el-table-column>
+        <el-table-column
+          prop="maxEtime"
+          width="120"
+          label="保障结束日期"
+          sortable>
+        </el-table-column>
+        <!-- order.payState == 1 ? '正常': '已取消' -->
+        <el-table-column
+          label="订单状态">
+          <template scope="scope">
+            <!-- <span :class="payStateParser(scope.row.payState)">
+              {{ payStateFormatter(scope.row.payState) }}
+            </span> -->
+            <el-tag :type="payStateParser(scope.row.payState)">
+              {{payStateFormatter(scope.row.payState)}}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="realPayoutFee"
+          width="120"
+          :formatter="moneyFormatter"
+          label="已赔付金额(元)"
+          sortable>
+        </el-table-column>
+        <el-table-column
+          prop="payoutFee"
+          width="120"
+          :formatter="moneyFormatter"
+          label="应赔付金额(元)"
+          sortable>
+        </el-table-column>
+        <el-table-column
+          prop="dividedAmount"
+          width="120"
+          :formatter="moneyFormatter"
+          label="分成金额(元)"
+          sortable>
+        </el-table-column>
+        <el-table-column
+          label="操作">
+          <template scope="scope">
+            <el-button type="text" size="small">详情</el-button>
+            <el-button type="text" size="small">发送合约</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
+  
     <div class="pagination-wrapper" v-if="!!dealList">
       <el-pagination
         @size-change="paginationSizeChange"
