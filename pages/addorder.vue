@@ -650,7 +650,7 @@
         </div>
         <div class="tarrif">
             <div class="explain"><h3><i class="el-icon-date"></i> 旅行行程</h3></div>
-            <p class="huge danger">￥{{tarrifs.tarrif}}</p>
+            <p class="huge danger">￥{{formatMoney(computedPaymentFee)}}</p>
         </div>
         <div class="insured">
           <div class="explain"><h3><i class="el-icon-date"></i> 被保人信息</h3></div>
@@ -680,6 +680,7 @@
       class="dialog-payment"
       title="您的订单已提交成功! 付款咯~"
       :visible.sync="paymentDialog"
+      :before-close="resetPaymentChecking"
     >
       <div class="info">
         <p><b>订单号：</b> {{orderInfo.outTradeNo}}</p>
@@ -693,7 +694,7 @@
           <b>订单成功支付后保障即刻生效，不得退货/退款</b></span>
         </h3>
         <div>
-          <h4>支付<b class="text-danger">￥{{1}}</b></h4>
+          <h4>支付<b class="text-danger">￥{{formatMoney(computedPaymentFee)}}</b></h4>
           <div class="checkbox">
             <el-radio-group v-model="payment.method">
               <el-radio :label="`wx`">
@@ -715,6 +716,7 @@
       class="wx-dialog-payment"
       title="微信支付"
       :visible.sync="wxPaymentDialog"
+      :before-close="resetPaymentChecking"
     >
       <p class="countdown">
         距离二维码过期剩余<b ref="wxQrcodeLifeCycle" class="text-danger">00:20:00</b>，过期后请点击
@@ -800,7 +802,8 @@ export default {
         state:'none',
         method:'wx',
         wechat: {
-          qrcode:'http://s.jiathis.com/qrcode.php?url=weixin://wxpay/bizpayurl?pr=ofGq54F',
+          qrcode:''
+          // qrcode:'http://s.jiathis.com/qrcode.php?url=weixin://wxpay/bizpayurl?pr=ofGq54F',
         },
         alipay: {
 
@@ -835,8 +838,12 @@ export default {
         [];
     },
     computedPaymentFee() {
-      return (this.tarrifs.custom||this.tarrifs.tarrif) * 100 - 
-      (this.coupon.isCollapsed? 0 : this.coupon.amount) * 100;
+      return (
+        // 优先使用(展开的)自定义的价格
+        ( (this.tarrifs.custom.enable && this.tarrifs.custom.value) || (this.tarrifs.tarrif) ) *100
+        // 减去优惠金额
+        - ( (this.coupon.isCollapsed? 0 : this.coupon.amount ) * 100 )
+      );
     }
   },
   methods: {
@@ -852,7 +859,7 @@ export default {
         }
         this.gotoStep( this.process.index + 1 );
       } else if (name === 'confirm') {
-        let couponCode   = this.coupon.isCollapsed? '': (this.coupon.state === 'success'? this.coupon.code: '');
+        let couponCode   = this.coupon.isCollapsed? undefined: (this.coupon.state === 'success'? this.coupon.code: undefined);
         this.$http.post('addOrder', {
           mid:'pc',
           contractId : this.contractInfo.contractId,
@@ -872,8 +879,8 @@ export default {
                 CountDown.closeBySign('tqbPaymentCountdown');
                 CountDown.openTimeCountBySeconds({
                   Ele: this.$refs.tqbPaymentCountdown,
-                  // CountDownSeconds:1200,
-                  CountDownSeconds:20,
+                  CountDownSeconds:1200,
+                  // CountDownSeconds:30,
                   Sign   : 'tqbPaymentCountdown',
                   Divider: ':',
                   EndFunc: ()=>{
@@ -952,6 +959,9 @@ export default {
       let s = opt.separator||'.';
       let y = !!opt.keepYear;
       return `${y?d.getFullYear()+s:''}${ this.prefixZero(d.getMonth()+1) }${s}${ this.prefixZero(d.getDate()) }`;
+    },
+    formatMoney(n) {
+      return (n/100).toFixed(2);
     },
     prefixZero(n) {
       return n>9? n: '0'+n;
@@ -1051,7 +1061,8 @@ export default {
     },
     wxpay() {
       this.wxPaymentDialog = true;
-      this.$http.post('PAY_WECHAT', {
+      let url = process.env.PATH_TYPE === 'development'? 'http://pay.baotianqi.cn/wxpay/nativepay': 'PAY_ALIPAY';
+      this.$http.post(url, {
           outTradeNo: this.orderInfo.outTradeNo,
           totalFee  : this.orderInfo.totalFee,
           body      : '晴空万里宝'
@@ -1063,7 +1074,7 @@ export default {
             CountDown.openTimeCountBySeconds({
                 Ele: this.$refs.wxQrcodeLifeCycle,
                 // CountDownSeconds:1200,
-                CountDownSeconds:20,
+                CountDownSeconds:30,
                 Divider: ':',
                 Sign   : 'wxQrcodeLifeCycle',
                 EndFunc: function () {
@@ -1073,14 +1084,15 @@ export default {
         })
     },
     alipay() {
-      this.$http.post('PAY_ALIPAY', {
+      let url = process.env.PATH_TYPE === 'development'? 'http://pay.baotianqi.cn/alipay/pay': 'PAY_ALIPAY';
+      this.$http.post(url, {
         outTradeNo  : this.orderInfo.outTradeNo,
         totalAmount : this.orderInfo.totalFee,
         subject     : '晴空万里宝',
         // returnUrl   : location.origin+location.pathname.replace(/\/[\w\-]+\.html$/, '/pay-successfully')
         returnUrl  : 'http://www.baidu.com'
       })
-        .then(resp=>{
+        .then(data=>{
           var div = document.createElement('div');
           document.body.appendChild(div);
           div.innerHTML = data;
@@ -1097,25 +1109,24 @@ export default {
     refreshWxQrcode() {
       this.wxpay();
     },
-    resetPaymentChecking() {
+    resetPaymentChecking(done) {
+      clearTimeout( this.checkPaymentVarias.timer );
       this.checkPaymentVarias = {
         timer : -1,
         couter: 0,
         delay : 1000,
         max   : 1200
       };
+      typeof done === 'function' && done();
     },
     checkPaymentState(stopChecking) {
+      clearTimeout( this.checkPaymentVarias.timer );
       let { delay, max } = this.checkPaymentVarias;
       if ( stopChecking || this.checkPaymentVarias.counter++ === max ) {
         return this.resetPaymentChecking();
       }
       this.$http.post('CHECK_PAYMENT_STATE', { params:{ innerOrderId:this.orderInfo.outTradeNo } })
         .then(resp=>{
-          if ( resp.data.state !== 1 ) {
-            return console.log('....');
-          }
-          console.log( resp.data.data.payState )
           if ( resp.data.payState === 1 ) {
             this.paymentDialog   = false;
             this.wxPaymentDialog = false;
@@ -1128,7 +1139,7 @@ export default {
         })
     }
   },
-  mounted() {
+  beforeMount() {
     // this.loadContractInfo()
     // 读取城市数据
     this.$http.post('getCitys')
@@ -1168,6 +1179,15 @@ export default {
       .catch(err=>{
         console.log(err);
       })
+  },
+
+  mounted() {
+    if ( process.env.PATH_TYPE === 'development' ) {
+      this.contractInfo = {"threshold": "10","contractId": "167812121","payoutRuleParam": "1:2|2:3" }
+      this.travel = JSON.parse('[{"date":"2018-01-15","city":["t2000","t2100","t2101"]},{"date":"2018-1-16","city":["t2000","t2100","t2101"]},{"date":"2018-1-17","city":["t2000","t2100","t2101"]}]')
+      this.tarrifs=JSON.parse('{"tarrif":10,"custom":{},"data":[10,20,50,100]}')
+      this.insured=JSON.parse('{"name":"名字","mobile":"13131313131"}')
+    }
   }
 }
 </script>

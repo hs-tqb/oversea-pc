@@ -1,7 +1,7 @@
 let config = {
   development: {
-    // baseURL:'http://localhost:5555/',
-    baseURL:'http://ts.baotianqi.cn/',
+    baseURL:'http://localhost:5555/',
+    // baseURL:'http://ts.baotianqi.cn/',
   },
   test: {
     baseURL:'http://ts.baotianqi.cn/',

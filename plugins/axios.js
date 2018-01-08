@@ -42,7 +42,9 @@ instance.interceptors.response.use(
         <span>重新登录</span>
       </button>`;
     } else if ( respData.state !== 1 ) {
-      message = respData.message;
+      if ( typeof respData === 'object' ) {
+        message = respData.message;
+      }
     }
     if ( !!message ) {
       Message.closeAll();

@@ -155,4 +155,21 @@ export default {
     */
  , FIND_PAYOUT_RECORD: 'sellerMerchant/findPayOutRecord'
 
+  // 支付
+  /**
+   * 微信支付
+   * @param outTradeNo 订单号
+   * @param totalFee   金额, 分
+   * @param body       商品描述, 固定为"晴空万里宝"
+   */
+ , 'http://pay.baotianqi.cn/wxpay/nativepay': 'payment/wxpay'
+  /**
+   * 支付宝支付
+   * @param outTradeNo    订单号
+   * @param totalAmout    金额, 分
+   * @param subject       订单标题, 固定为"晴空万里宝"
+   * @param body          订单描述, 选填
+   * @param returnUrl     支付成功跳转url
+   */
+ , 'http://pay.baotianqi.cn/alipay/pay': 'payment/alipay'
 }
