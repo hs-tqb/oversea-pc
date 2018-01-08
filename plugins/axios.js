@@ -18,12 +18,12 @@ let instance = axios.create({
 // 请求拦截
 let url = '';
 instance.interceptors.request.use(httpRequest =>{
-
-  console.log( '_________________________' );
-  console.log( url );
-  console.log( httpRequest.url );
-  console.log( '_________________________' );
   url = apis[httpRequest.url];
+  
+  console.log( '_________________________' );
+  console.log( httpRequest.url );
+  console.log( url );
+  console.log( '_________________________' );
 
   // 对于外部请求, 不添加前缀, 也不加token参数
   if ( url.indexOf('http') === 0 ) return httpRequest;
