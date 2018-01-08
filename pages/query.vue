@@ -87,7 +87,7 @@
         width="50"
         label="序号">
         <template scope="scope">
-          {{scope.$index}}
+          {{scope.$index+1}}
         </template>
       </el-table-column>
       <el-table-column
