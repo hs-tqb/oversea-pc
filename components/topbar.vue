@@ -29,12 +29,15 @@
       <el-button class="avatar">
         <i></i> 昵称昵称
       </el-button>
+      <el-button @click="logout">
+        退出登录
+      </el-button>
     </div>
   </div>
 </template>
 
 <script>
-import axios from '~/plugins/axios'
+// import axios from '~/plugins/axios'
 // import store from '~/store/index.js'
 
 export default {
@@ -50,6 +53,15 @@ export default {
   methods: {
     toggleSidebarCollapse(e) {
       this.$store.commit('setSidebarCollapseState', !this.isSidebarCollapsed);
+    },
+    logout() {
+      console.log('out');
+      this.$http.post('LOGOUT')
+        .then(resp=>{
+          if ( resp.state === 1 ) {
+            this.$message.success('退出成功');
+          }
+        })
     }
   }
 }
