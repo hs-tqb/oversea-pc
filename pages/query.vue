@@ -87,7 +87,7 @@
           width="50"
           label="序号">
           <template scope="scope">
-            {{scope.$index+1}}
+            {{ params.pageSize*(params.page-1) + scope.$index+1}}
           </template>
         </el-table-column>
         <el-table-column
