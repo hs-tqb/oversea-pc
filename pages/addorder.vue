@@ -1061,7 +1061,7 @@ export default {
     },
     wxpay() {
       this.wxPaymentDialog = true;
-      let url = process.env.PATH_TYPE === 'development'? 'http://pay.baotianqi.cn/wxpay/nativepay': 'WECHAT_PAY';
+      let url = process.env.PATH_TYPE === 'development'? 'http://pay.baotianqi.cn/wxpay/nativepay': 'PAY_WECHAT';
       this.$http.post(url, {
           outTradeNo: this.orderInfo.outTradeNo,
           totalFee  : this.orderInfo.totalFee,
