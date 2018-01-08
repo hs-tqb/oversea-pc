@@ -24,7 +24,8 @@ instance.interceptors.request.use(httpRequest =>{
     ( httpRequest.params?httpRequest.params:(httpRequest.params={}) )
     .token = localStorage.getItem('token');
   }
-  httpRequest.url = baseURL + apis[httpRequest.url];
+  
+  httpRequest.url = (apis[httpRequest].indexOf('http')===0? '': baseURL) + apis[httpRequest.url];
   return httpRequest;
 });
 
