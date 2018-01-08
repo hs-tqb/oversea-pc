@@ -1125,8 +1125,12 @@ export default {
       if ( stopChecking || this.checkPaymentVarias.counter++ === max ) {
         return this.resetPaymentChecking();
       }
-      this.$http.post('CHECK_PAYMENT_STATE', { params:{ innerOrderId:this.orderInfo.outTradeNo } })
+      this.$http.post('CHECK_PAYMENT_STATE', { innerOrderId:this.orderInfo.outTradeNo } )
         .then(resp=>{
+          if ( resp.state !== 1 ) {
+            this.wxPaymentDialog = false;
+            return;
+          }
           if ( resp.data.payState === 1 ) {
             this.paymentDialog   = false;
             this.wxPaymentDialog = false;
