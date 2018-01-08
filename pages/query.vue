@@ -83,10 +83,12 @@
       @current-change="showOrderDetail"
       :default-sort="{prop:'date', order:'descending'}"
       >
-      <!-- <el-table-column
-        type="index"
-        label="序号"
-        :index="index"> -->
+      <el-table-column
+        width="50"
+        label="序号">
+        <template scope="scope">
+          {{scope.$index}}
+        </template>
       </el-table-column>
       <el-table-column
         prop="innerOrderId"
