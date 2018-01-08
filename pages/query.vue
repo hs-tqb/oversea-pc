@@ -76,12 +76,12 @@
       </div>
     </div>
     <el-table
-      :data="!!dealList? dealList.rows: []"
-      style="min-width:100%"
       stripe
       highlight-current-row
-      @current-change="showOrderDetail"
+      :data="!!dealList? dealList.rows: []"
+      v-loading="dealListLoading"
       :default-sort="{prop:'date', order:'descending'}"
+      @current-change="showOrderDetail"
       >
       <el-table-column
         width="50"
@@ -197,6 +197,7 @@ export default {
   data() {
     return {
       params: this.getDefaultParams(),
+      
       datePickerOptions: {
         dateRange:'',
         shortcuts: [{
@@ -225,7 +226,8 @@ export default {
           }
         }]
       },
-      dealList:null
+      dealList:null,
+      dealListLoading:true,
     }
   },
   computed: {
@@ -263,15 +265,14 @@ export default {
       };
     },
     loadDealList(inDefault) {
-
-      console.log( this.params );
-
+      this.dealListLoading = true;
       if ( inDefault ) {
         this.params = this.getDefaultParams();
       }
       this.$http.post('GET_DEAL_LIST',  this.params )
       .then(resp=>{
         this.dealList = resp.data;
+        this.dealListLoading = false;
       })
     },
     datePicked(dates, d) {
