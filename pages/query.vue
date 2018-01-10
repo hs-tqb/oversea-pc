@@ -273,7 +273,7 @@ export default {
       },
       sendContractParams: {
         innerOrderId:'',
-        show:true,
+        show:false,
         mail:'',
         isMailChecked:false,
         isMailValid:false,
