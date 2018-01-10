@@ -411,8 +411,7 @@ export default {
       window.localStorage.setItem(params.innerOrderId, params.mail)
 
       this.$http.post('SEND_MAIL', {
-        // innerOrderId: params.innerOrderId,
-        innerOrderId: 'TQ212999328198',
+        innerOrderId: params.innerOrderId,
         file   : 'http://ts.baotianqi.cn/mail/pdfPage',
         email  : params.mail
       })
