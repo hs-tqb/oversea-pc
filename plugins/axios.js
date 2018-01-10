@@ -40,20 +40,23 @@ instance.interceptors.request.use(httpRequest =>{
 
 
 // 响应拦截器
-let respData, errorCode, message;
+let respData, errorCode, message, duration;
 instance.interceptors.response.use(
   httpResponse=>{
     respData  = httpResponse.data;
     errorCode = respData.errorCode;
     message   = '';
+    duration  = 3000;
     if ( errorCode == 1050 || errorCode == 1052 ) {
       message = `${respData.message}
       <button type="button" style="margin-left:60px;" class="el-button el-button--primary el-button--small" onclick="Message.closeAll();$nuxt._router.push('/login');">
         <span>重新登录</span>
       </button>`;
+      duration = 0;
     } else if ( respData.state !== 1 ) {
       if ( typeof respData === 'object' ) {
         message = respData.message;
+        duration = 3000;
       }
     }
     if ( !!message ) {
@@ -62,7 +65,8 @@ instance.interceptors.response.use(
       Message.error({
         dangerouslyUseHTMLString: true,
         showClose:true,
-        message: message
+        message: message,
+        duration:duration
       });
     }
     return respData;
