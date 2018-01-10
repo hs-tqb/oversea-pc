@@ -24,6 +24,12 @@ export default {
    // 触发信息
    FIND_ORDER_TRIGGER: "usercenter/findOrderTrigger",
 
+  /**
+   * 获取赔付记录
+   * @param innerOrderId  *
+   */
+  FIND_PAYOUT_RECORD: 'sellerMerchant/findPayOutRecord',
+
    // 取消订单
    CANCEL_DEAL: MODULE_NAME + "cancelDeal",
 
@@ -73,9 +79,8 @@ export default {
     * @param orderId  id
     * @return success or error
     */
-   // SENT_MAIL: 'message/mailSenderInfo/mailSend'
-   SENT_MAIL: 'http://message.baotianqi.cn/mailSenderInfo/mailSend'
-
+   // SEND_MAIL: 'message/mailSenderInfo/mailSend'
+   SEND_MAIL: 'http://message.baotianqi.cn/mailSenderInfo/mailSend'
 
    // 个人账户
    /**
@@ -148,12 +153,6 @@ export default {
     * @param productId
     */
  , findCoupons: 'sellerMerchant/findCoupons'
-
-   /**
-    * 获取赔付记录
-    * @param innerOrderId  *
-    */
- , FIND_PAYOUT_RECORD: 'sellerMerchant/findPayOutRecord'
 
   // 支付
   /**

@@ -23,6 +23,9 @@
       }
     }
   }
+  .dialog-orderDetail {
+    .el-dialog__header { @include border('bottom'); }
+  }
 </style>
 
 <template>
@@ -81,7 +84,7 @@
         highlight-current-row
         :data="!!dealList? dealList.rows: []"
         :default-sort="{prop:'date', order:'descending'}"
-        @current-change="showOrderDetail"
+        @row-click="showOrderDetail"
         >
         <el-table-column
           width="50"
@@ -172,7 +175,7 @@
           label="操作">
           <template scope="scope">
             <el-button type="text" size="small">详情</el-button>
-            <el-button type="text" size="small">发送合约</el-button>
+            <el-button type="text" size="small" @click.stop="sendContract(scope.row)">发送合约</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -189,16 +192,51 @@
         :total="dealList.total">
       </el-pagination>
     </div>
+    <el-dialog :visible.sync="orderDetail.show" top="50px" width="900px" title="订单详情" custom-class="dialog-orderDetail">
+      <order-detail :orderId="orderDetail.orderId"></order-detail>
+    </el-dialog>
+    <el-dialog 
+      :visible.sync="sendContractParams.show" 
+      title="您可以" width="600px" custom-class="dialog-sendContract"
+      :before-close="resetSentContractParams"
+    >
+      <p>
+        发送合约到邮箱：
+        <el-input placeholder="" v-model.trim="sendContractParams.mail" style="width:auto;">
+          <template slot="append">
+            <el-button type="primary" @click="doSendContract">发送</el-button>
+          </template>
+        </el-input>
+        <span v-if="sendContractParams.isMailChecked" :class="sendContractTipsClass">
+          &nbsp;&nbsp;&nbsp;{{sendContractTips}}
+        </span>
+      </p>
+      <p>或者</p>
+      <p>
+        下载合约到本地：<el-button type="primary" @click="downloadContract">下载</el-button>
+        <span 
+          v-if="sendContractParams.isDownloading" 
+          id="downloadContractTips" 
+          :class="sendContractParams.hasDownloaded?'text-success':'text-primary'"
+        >
+          &nbsp;&nbsp;&nbsp;
+          {{
+            sendContractParams.hasDownloaded? 
+            '下载成功：晴空万里宝合约_'+sendContractParams.innerOrderId+'.pdf':
+            '下载中...'
+          }}
+        </span>
+      </p>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import axios from '~/plugins/axios'
+import orderDetail from '~/components/orderDetail'
 export default {
   data() {
     return {
       params: this.getDefaultParams(),
-      
       datePickerOptions: {
         dateRange:'',
         shortcuts: [{
@@ -229,13 +267,70 @@ export default {
       },
       dealList:null,
       dealListLoading:true,
+      orderDetail: {
+        show:false,
+        orderId:'',
+      },
+      sendContractParams: {
+        innerOrderId:'',
+        show:true,
+        mail:'',
+        isMailChecked:false,
+        isMailValid:false,
+        isSending: false,
+        isSentFailed:false,
+        isSentSuccess:false,
+        textCheckFailed:'邮箱格式错误, 请检查',
+        textSending:'发送中...',
+        textSentFailed:'发送失败，请稍后重试',
+        textSentSuccess:'发送成功',
+
+        isDownloading:false,
+        hasDownloaded:false,
+      }
     }
   },
+  components: {
+    orderDetail: orderDetail
+  },
   computed: {
+    sendContractTips() {
+      let params = this.sendContractParams;
+      let text   = '';
+      if ( params.isMailValid ) {
+        if ( params.isSending ) {
+          text = params.textSending;
+        } else if ( params.isSentSuccess ) {
+          text = params.textSentSuccess;
+        } else if ( params.isSentFailed ) {
+          text = params.textSentFailed;
+        }
+      } else {
+        text = params.textCheckFailed;
+      }
+      return text;
+    },
+    sendContractTipsClass() {
+      let params = this.sendContractParams;
+      let text   = 'text-';
+      if ( params.isMailValid ) {
+        if ( params.isSending ) {
+          text += 'normal';
+        } else if ( params.isSentSuccess ) {
+          text += 'success';
+        } else if ( params.isSentFailed ) {
+          text += 'danger';
+        }
+      } else {
+        text += 'danger';
+      }
+      return text;
+    },
   },
   methods: {
     showOrderDetail(row) {
-      console.log(row);
+      this.orderDetail.orderId = row.innerOrderId;
+      this.orderDetail.show = true;
     },
     payStateParser(code) {
       // console.log(row, col);
@@ -276,6 +371,7 @@ export default {
         this.dealListLoading = false;
       })
     },
+    // 筛选 - 日历控制
     datePicked(dates, d) {
       this.params.stime = this.calendarDateFormatter(dates[0]);
       this.params.etime = this.calendarDateFormatter(dates[1]);
@@ -286,6 +382,7 @@ export default {
     prefixZero(n) {
       return n>9? n: '0'+n;
     },
+    // 页码控制
     paginationChange(page) {
       this.params.page = page;
       this.loadDealList();
@@ -293,14 +390,83 @@ export default {
     paginationSizeChange(pageSize) {
       this.params.pageSize = pageSize;
       this.loadDealList();
+    },
+    sendContract(row) {
+      this.sendContractParams.innerOrderId  = row.innerOrderId;
+      this.sendContractParams.mail = window.localStorage.getItem(row.innerOrderId) || '';
+      this.sendContractParams.show = true;
+    },
+    doSendContract() {
+      let params = this.sendContractParams;
+      if ( params.isSending ) return;
+      params.isSending     = true;
+
+      params.isMailChecked = true;
+      if ( !/^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/.test( params.mail ) ) {
+        return params.isSending = false;
+        params.isMailValid   = false;
+      }
+
+      params.isMailValid   = true;
+      window.localStorage.setItem(params.innerOrderId, params.mail)
+
+      this.$http.post('SEND_MAIL', {
+        // innerOrderId: params.innerOrderId,
+        innerOrderId: 'TQ212999328198',
+        file   : 'http://ts.baotianqi.cn/mail/pdfPage',
+        email  : params.mail
+      })
+      .then(resp=>{
+        params.isSending    = false;
+        if ( resp.state !== 1 ) {
+          throw resp.message;
+        } else {
+          params.sentFailed = false;
+          params.isSentSuccess = true;
+        }
+      })
+      .catch(err=>{
+        params.isSending     = false;
+        params.sentFailed    = true;
+        params.isSentSuccess = false;
+      })
+    },
+    downloadContract() {
+      let params = this.sendContractParams;
+      params.isDownloading = true;
+      var iframe = document.createElement('iframe');
+      iframe.style.width = '0px';
+      iframe.style.height= '0px';
+      document.body.appendChild(iframe);
+      iframe.src = '/pdf?innerOrderId=' + params.innerOrderId;
+      window.__contractDownloadCompleted = false;
+      this.checkDownloadCompletionState(()=>{
+        this.sendContractParams.hasDownloaded = true;
+      })
+    },
+    checkDownloadCompletionState(callback) {
+      if ( window.__contractDownloadCompleted ) {
+        callback && callback();
+      } else {
+        setTimeout(()=>{
+          this.checkDownloadCompletionState(callback)
+        }, 300);
+      }
+    },
+    resetSentContractParams(done) {
+      let params = this.sendContractParams;
+      params.isMailChecked = false;
+      params.isMailValid   = false;
+      params.isSending     = false;
+      params.isSentFailed  = false;
+      params.isSentSuccess = false;
+      params.isDownloading = false;
+      params.hasDownloaded = false;
+      done();
     }
   },
   beforeMount() {
-    // this.$http.post('GET_DEAL_LIST', { page:1, pageSize:10 })
-      // .then(resp=>{
-        // this.dealList = resp.data;
-      // })
-      this.loadDealList();
+    this.loadDealList();
   }
 }
 </script>
