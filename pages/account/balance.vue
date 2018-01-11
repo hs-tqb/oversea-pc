@@ -105,6 +105,7 @@
         <el-tab-pane name="withdrawal">
           <span slot="label"><i class="el-icon-date"></i> 提现记录</span>
           <el-radio-group v-model="withdrawalParams.state" @change="radioChange" size="small">
+            <el-radio-button label="">全部</el-radio-button>
             <el-radio-button label="0">进行中</el-radio-button>
             <el-radio-button label="1">已完成</el-radio-button>
             <el-radio-button label="2">失败</el-radio-button>
@@ -178,7 +179,7 @@ export default {
       return { payState:'', page:1, pageSize:20, url:'DIVIDED_LIST' };
     },
     getDefaultWithdrawalParams() {
-      return { state:'0', page:1, pageSize:20, url:'WITHDRAWAL_LIST' };
+      return { state:'', page:1, pageSize:20, url:'WITHDRAWAL_LIST' };
     },
     loadData() {
       let opt = this[`${this.tab}Params`];
