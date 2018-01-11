@@ -64,7 +64,7 @@
             <el-menu-item 
               v-for="(sItem,j) in item.children" 
               :key="`nav-${i}-${j}`" 
-              :index="sItem.link"
+              :index="item.link + sItem.link"
               :class="$route.path===sItem.link?'is-active':''"
             >
               <i :class="`el-icon-${sItem.icon}`"></i>
@@ -96,10 +96,9 @@
           {icon:'more',  text:'首页', link:'/'},
           {icon:'goods', text:'下单', link:'/addorder'},
           {icon:'search', text:'查询订单', link:'/query'},
-          {icon:'date',  text:'我的账户', link:'/test', children:[
-            {icon:'date', text:'测试', link:'/test'},
-            {icon:'date', text:'测试子页', link:'/test/zzz'},
-            {icon:'date', text:'测试子页', link:'/test/333'}
+          {icon:'date',  text:'我的账户', link:'/account', children:[
+            {icon:'date', text:'账户余额', link:'/balance'},
+            {icon:'date', text:'账户资料', link:'/profile'},
           ]}
         ]
       };
