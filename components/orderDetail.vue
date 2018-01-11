@@ -136,6 +136,7 @@ export default {
   },
   methods: {
     loadData() {
+      this.orderInfo = this.triggerInfo = null;
       // 需要3个接口的数据.....................
       Promise.all([
         new Promise((res,rej)=>{

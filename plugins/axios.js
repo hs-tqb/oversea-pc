@@ -48,8 +48,8 @@ instance.interceptors.response.use(
     message   = '';
     duration  = 3000;
     if ( errorCode == 1050 || errorCode == 1052 ) {
-      message = `${respData.message}
-      <button type="button" style="margin-left:60px;" class="el-button el-button--primary el-button--small" onclick="Message.closeAll();$nuxt._router.push('/login');">
+      message = `<span style="line-height:32px;">${respData.message}</span>
+      <button type="button" style="float:right;" class="el-button el-button--primary el-button--small" onclick="Message.closeAll();$nuxt._router.push('/login');">
         <span>重新登录</span>
       </button>`;
       duration = 0;

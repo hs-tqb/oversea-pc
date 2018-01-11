@@ -86,6 +86,7 @@
                   @extend .flex-dir-row; 
                   margin-bottom:10px;
                   height:40px;
+                  > i { display: inline-block; margin:5px 10px 0 0; width:30px; height:30px; line-height:30px; text-align:center; border-radius:50%; background:#ddd; }
                   .date { margin-right:20px; width:280px; }
                   .city { 
                     width:280px;
@@ -244,7 +245,8 @@
     // .el-cascader-menu { min-width:240px!important; max-height:204px; }
   }
   .payout-popup {
-    padding:0; 
+    padding:10px; 
+    i { margin-right:6px; font-size:16px; vertical-align:-1px; }
     .el-alert__description { white-space:nowrap; }
   }
   .dialog-payment {
@@ -341,6 +343,7 @@
             </div>
             <ul class="picker">
               <li v-for="(t,i) in travel" :v-key="`travel-d${i}`">
+                <i>{{i+1}}</i>
                 <el-date-picker
                   class="date"
                   type="date"
@@ -358,6 +361,7 @@
                   placeholder="试试搜索：新加坡"
                   filterable
                   v-model="t.city"
+                  :show-all-levels="false"
                   :options="cityOptions"
                   :clearable="true"
                   @change="cityPicked($event, i)"
@@ -385,14 +389,14 @@
                   ></el-radio-button>
                 </el-radio-group>
                 <div class="custom">
-                  <a href="javascript:void(0)" @click="tarrifs.custom.enable=!tarrifs.custom.enable">其它价格</a>
+                  <a href="javascript:void(0)" @click="customPrice">其它价格</a>
                   <el-input
-                    v-if="tarrifs.custom.enable"
+                    v-show="tarrifsCustomEnable"
                     :min="5" 
                     :max="200"
                     size="medium"
                     placeholder="5 ~ 200"
-                    v-model="tarrifs.custom.value"
+                    v-model="tarrifs.custom"
                     :autofocus="true"
                     @change="changeTarrif($event,'isCustom')" 
                   ></el-input>
@@ -451,7 +455,7 @@
           <!-- 提交按钮 -->
           <div class="btns-confirm">
             <el-button type="primary" @click="nextStep(process.name)">提交</el-button>
-            <el-button @click="prevStep">取消</el-button>
+            <el-button @click="prevStep" v-if="process.index">取消</el-button>
           </div>
         </div>
         <div id="safeguard-border"></div>
@@ -460,11 +464,20 @@
             <h3>保障计划</h3>
             <p>每次修改旅行时间和目的地，保障计划都会实时更新</p>
           </div>
-          <template v-if="!contractInfo.threshold">
-            <div>
-              <br>没有数据时的文案提示
-              <br>没有数据时的文案提示
-              <br>没有数据时的文案提示
+          <template v-if="contractInfo.loading">
+            <h3 style="text-align:center;">正在奋力查询<br>保障计划详情</h3>
+          </template>
+          <template v-else-if="!contractInfo.threshold">
+            <div v-if="contractInfo.message">
+              <h3>抱歉，暂无保障计划</h3>
+              <p>解决办法：</p>
+              <p>更换目的地城市</p>
+              <p>联系天气暴客服（微信 tianqibao2015）</p>
+            </div>
+            <div v-else>
+              <h3 style="text-align:center;">
+                请输入三天或以上旅游行程，<br>即刻查询保障计划
+              </h3>
             </div>
           </template>
           <template v-else>
@@ -475,28 +488,34 @@
                   <tr>
                     <td>
                       最高保障金额
-                      <el-popover trigger="click" placement="top" popper-class="payout-popup">
-                        <el-alert
+                      <el-popover trigger="hover" placement="top" popper-class="payout-popup">
+                        <!-- <el-alert
                           title="消息提示的文案"
                           type="info"
                           description="文字说明文字说明文字说明文字说明文字说明文字说明"
                           :closable="false"
                           show-icon>
-                        </el-alert>
+                        </el-alert> -->
                         <span slot="reference"><i class="el-icon-question"></i></span>
+                        <div>
+                          <i class="el-icon-question"></i>文字文字
+                        </div>
                       </el-popover>
                     </td>
                     <td>
                       触发标准
                       <el-popover trigger="hover" placement="top" popper-class="payout-popup">
-                        <el-alert
+                        <!-- <el-alert
                           title="消息提示的文案"
                           type="info"
                           description="文字说明文字说明文字说明文字说明文字说明文字说明"
                           :closable="false"
                           show-icon>
-                        </el-alert>
+                        </el-alert> -->
                         <span slot="reference"><i class="el-icon-question"></i></span>
+                        <div>
+                          <i class="el-icon-question"></i>文字文字
+                        </div>
                       </el-popover>
                     </td>
                   </tr>
@@ -516,8 +535,8 @@
             <div class="city">
               <h4>保障目的地个数</h4>
               <p class="huge">
-                <span>{{travel.length}}</span>
-                {{computedCities.map(c=>c.label).join('、')}}
+                <span>{{computedCityLabels.length}}</span>
+                {{computedCityLabels.join('、')}}
               </p>
             </div>
             <div class="explain">
@@ -535,7 +554,7 @@
                 <tbody>
                   <tr v-for="(p,i) in computedPayoutRule">
                     <td>{{p.day}}</td>
-                    <td>{{p.fee}}</td>
+                    <td>￥{{p.fee}}</td>
                   </tr>
                 </tbody>
               </table>
@@ -596,27 +615,19 @@
                     <td>
                       最高保障金额
                       <el-popover trigger="click" placement="top" popper-class="payout-popup">
-                        <el-alert
-                          title="消息提示的文案"
-                          type="info"
-                          description="文字说明文字说明文字说明文字说明文字说明文字说明"
-                          :closable="false"
-                          show-icon>
-                        </el-alert>
                         <span slot="reference"><i class="el-icon-question"></i></span>
+                        <div>
+                          <i class="el-icon-question"></i>文字文字
+                        </div>
                       </el-popover>
                     </td>
                     <td>
                       触发标准
                       <el-popover trigger="hover" placement="top" popper-class="payout-popup">
-                        <el-alert
-                          title="消息提示的文案"
-                          type="info"
-                          description="文字说明文字说明文字说明文字说明文字说明文字说明"
-                          :closable="false"
-                          show-icon>
-                        </el-alert>
                         <span slot="reference"><i class="el-icon-question"></i></span>
+                        <div>
+                          <i class="el-icon-question"></i>文字文字
+                        </div>
                       </el-popover>
                     </td>
                   </tr>
@@ -641,7 +652,7 @@
                 <tbody>
                   <tr v-for="(p,i) in computedPayoutRule">
                     <td>{{p.day}}</td>
-                    <td>{{p.fee}}</td>
+                    <td>￥{{p.fee}}</td>
                   </tr>
                 </tbody>
               </table>
@@ -670,9 +681,10 @@
           <el-button type="primary" @click="nextStep(process.name)">提交</el-button>
           <el-button @click="prevStep">取消</el-button>
         </div>
-      </div>
-      <!-- 第三步 -->
-      <div v-else-if="process.name==='complete'" id="complete" class="step-panel">
+        <div class="btns-confirm" v-if="process.name==='complete'" style="text-align:center;">
+          <el-button type="primary" style="margin-left:512px;" @click="reorder">继续下单</el-button>
+          <el-button @click="showOrderDetail">查看订单</el-button>
+        </div>
       </div>
     </div>
     <el-dialog
@@ -725,12 +737,19 @@
       <img :src="payment.wechat.qrcode" width="225" alt="">
       <a href="javascript:void(0);" class="hideModal" @click="wxPaymentDialog=false">&lt; 选择其它支付方式</a>
     </el-dialog>
+
+    <!-- 订单详情 -->
+    <el-dialog :visible.sync="orderDetail.show" top="50px" width="900px" title="订单详情" custom-class="dialog-orderDetail">
+      <order-detail :orderId="orderDetail.orderId"></order-detail>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import axios from '~/plugins/axios'
 import CountDown from '~/assets/js/countdown'
+import orderDetail from '~/components/orderDetail.vue'
+import lodash from 'lodash'
 export default {
   data() {
     return {
@@ -771,12 +790,11 @@ export default {
       contractInfo: {},
       orderInfo   : {},
       // 资费选择
+      tarrifsCustomEnable:false,
       tarrifs: {
         tarrif: 10,
-        custom: {
-          enable:false,
-          value  :'',
-        },
+        customEnable:false,
+        custom:'',
         data  : [10, 20, 50, 100]
       },
       coupon: {
@@ -816,6 +834,11 @@ export default {
         couter: 0,
         delay : 1000,
         max   : 1200
+      },
+
+      orderDetail: {
+        orderId:'',
+        show:false
       }
 
       // mock
@@ -828,6 +851,14 @@ export default {
   computed: {
     computedCities() {
       return this.travel.map(t=>this.getCity(t.city)).filter(c=>!!c);
+    },
+    computedCityLabels() {
+      let m = {};
+      return this.computedCities.map(c=>{
+        if ( m[c.label] ) return false
+        m[c.label]=true;
+        return c.label;
+      }).filter(l=>!!l);
     },
     computedPayoutRule() {
       return this.contractInfo.payoutRuleParam? 
@@ -846,7 +877,7 @@ export default {
     },
     computedOrderPrice() {
       // 优先使用(展开的)自定义的价格
-      return ( (this.tarrifs.custom.enable && this.tarrifs.custom.value) || (this.tarrifs.tarrif) ) *100
+      return ( (this.tarrifsCustomEnable && this.tarrifs.custom) || (this.tarrifs.tarrif) ) *100
     }
   },
   methods: {
@@ -911,6 +942,9 @@ export default {
       p.index = n;
       p.name = p.data[n].name;
     },
+    reorder() {
+      this.gotoStep(0);
+    },
     datePicked(val, idx) {
       console.log(val);
       if ( val ) {
@@ -928,6 +962,9 @@ export default {
       this.$nextTick(this.loadContractInfo)
     },
     cityPicked(val, idx) {
+      if ( val.length === 0 ) {
+        return this.contractInfo = {};
+      };
       this.travel.some((d,i)=>{
         if ( idx < i ) {
           if ( d.city && d.city.length ) return true;
@@ -978,19 +1015,24 @@ export default {
             undefined;
       }
 
-      this.contractInfo.loading = true;
+      this.contractInfo = { loading:true };
 
       this.$http.post('getContract', {
         productId:this.production.productId,
         times: this.travel.map(t=>this.formatDate(t.date, {keepYear:true, separator:'-'})).join(','),
         cityIds:this.computedCities.map(c=>c.value).join(','), 
       })
-      .then(resp=>{ this.contractInfo = resp.state===1? resp.data: {}; });
+      .then(resp=>{ this.contractInfo = resp.state===1? resp.data: {message:resp.message}; })
+      .catch(err=>{ this.contractInfo = { message:err }; })
+    },
+    customPrice() {
+      this.tarrifsCustomEnable = !this.tarrifsCustomEnable;
+      console.log( this.tarrifsCustomEnable )
     },
     changeTarrif(val, isCustom) {
       if ( !isCustom ) {
         this.tarrifs.tarrif = val;
-        this.tarrifs.custom.value = '';
+        this.tarrifs.custom = '';
       } else {
         val = parseInt(val, 10);
         if ( isNaN(val) ) {
@@ -1001,7 +1043,7 @@ export default {
           } else if ( val < 5 ) {
             val = 5;
           }
-          this.tarrifs.custom.value = val;
+          this.tarrifs.custom = val;
         }
       }
     },
@@ -1146,6 +1188,10 @@ export default {
             this.checkPaymentVarias.timer = setTimeout(this.checkPaymentState, delay);
           }
         })
+    },
+    showOrderDetail() {
+      this.orderDetail.orderId = this.orderInfo.outTradeNo;
+      this.orderDetail.show = true;
     }
   },
   beforeMount() {
@@ -1197,6 +1243,9 @@ export default {
       this.tarrifs=JSON.parse('{"tarrif":10,"custom":{},"data":[10,20,50,100]}')
       this.insured=JSON.parse('{"name":"名字","mobile":"13131313131"}')
     }
+  },
+  components: {
+    orderDetail:orderDetail
   }
 }
 </script>
