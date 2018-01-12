@@ -244,7 +244,6 @@ export default {
       this.currentTabParams.pageSize = size;
       this.loadListData();
     },
-
     parseWithdrawState(row) {
       var state = row.auditState==2? 0
             : ( row.auditState===1? 
