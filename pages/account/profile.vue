@@ -59,7 +59,9 @@
         <p class="tips">提现款将以微信转账的方式支付到您的微信账户中。为保证您能正常收到提现款， 请务必保证您已关注天气宝微信号（不得取关），并已绑定手机号。</p>
         <p>
           <span>提现打款方式：微信</span>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
           <span>微信绑定手机：{{merchantInfo.mobile}}</span>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
           <span>微信绑定状态：<i v-if="merchantInfo.verifyState===1" class="text-success">已绑定</i><i class="text-danger" v-else>未绑定</i></span>
         </p>
         <p v-if="merchantInfo.merchantId && merchantInfo.verifyState!==1">
