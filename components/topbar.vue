@@ -93,7 +93,7 @@
         <p><b>用&ensp;&ensp;&ensp;&ensp;户&ensp;&ensp;&ensp;&ensp;名</b>{{merchantInfo.userName}}</p>
         <p><b>手&ensp;&ensp;&ensp;&ensp;机&ensp;&ensp;&ensp;&ensp;号</b>{{merchantInfo.mobile}}</p>
         <p><b>真&ensp;&ensp;实&ensp;&ensp;姓&ensp;&ensp;名</b>{{merchantInfo.realName}}</p>
-        <p><b>商&ensp;&ensp;户&ensp;&ensp;名&ensp;&ensp;称</b>{{merchantInfo.bdName}}</p>
+        <p><b>商&ensp;&ensp;务&ensp;&ensp;名&ensp;&ensp;称</b>{{merchantInfo.bdName}}</p>
         <p><b>商&ensp;务&ensp;手&ensp;机&ensp;号</b>{{merchantInfo.bdMobile}}</p>
       </div>
       <div slot="footer" class="dialog-footer">
@@ -120,7 +120,7 @@
       </div>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="doChangePassword" :disable="enableToChangePassword.result">确 定</el-button>
-        <el-button @click="dialogChangePasswrod.show=false">提交</el-button>
+        <el-button @click="dialogChangePasswrod.show=false">取消</el-button>
       </div>
     </el-dialog>
     <el-dialog 
@@ -279,8 +279,8 @@ export default {
       this.$http.post('SET_NOTICE_STATE', {id:curr.id, state:1})
       .then(resp=>{
         if ( resp.state === 1 ) {
-          this.dialogNotice.show    = false;
-          this.dialogNotice.current = null;
+          d.show    = false;
+          d.current = null;
           this.showUnreadNotice();
         }
       })
