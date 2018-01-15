@@ -50,7 +50,9 @@
           start-placeholder="开始日期"
           end-placeholder="结束日期"
           @change="datePicked"
-          align="right">
+          align="right"
+          :clearable="false"
+        >
         </el-date-picker>
       </div>
       <div class="inner-wrapper">
@@ -373,8 +375,13 @@ export default {
     },
     // 筛选 - 日历控制
     datePicked(dates, d) {
-      this.params.stime = this.calendarDateFormatter(dates[0]);
-      this.params.etime = this.calendarDateFormatter(dates[1]);
+      if ( !!dates && dates.length ) {
+        this.params.stime = this.calendarDateFormatter(dates[0]);
+        this.params.etime = this.calendarDateFormatter(dates[1]);
+      } else {
+        this.params.stime = undefined;
+        this.params.etime = undefined;
+      }
     },
     calendarDateFormatter(d) {
       return `${d.getFullYear()}-${this.prefixZero(d.getMonth()+1)}-${this.prefixZero(d.getDate())}`;
