@@ -39,7 +39,7 @@
         <h3>{{moneyFormatter(accountInfo.accountBalance)}}</h3>
         <el-button 
           :type="accountInfo.accountBalance<=0?'info':'primary'" 
-          :disabled="enableToWithdraw"
+          :disabled="!enableToWithdraw"
           @click="doWithdraw"
         >提现</el-button>
       </div>
@@ -199,8 +199,8 @@ export default {
     },
     doWithdraw() {
       let balance = this.accountInfo.accountBalance;
+      this.accountInfo.accountBalance = 0;
       if ( balance <= 0 ) return;
-      if ( this.accountInfo.isFirst==1 && balance<50 ) return;
       this.$http.post('DO_WITHDRAW', {withdrawAmount:balance})
       .then(resp=>{
         let text = '';
