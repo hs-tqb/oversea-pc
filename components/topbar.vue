@@ -176,7 +176,6 @@ export default {
     },
     enableToChangePassword() {
       let d = this.dialogChangePasswrod, obj;
-      console.log(d);
       if ( !this.checkMobileValidation(d.mobile) ) {
         obj = { result:false, text:'手机号码错误' }
       } else if (!d.vfcode ) {
@@ -195,11 +194,11 @@ export default {
       this.$store.commit('setSidebarCollapseState', !this.isSidebarCollapsed);
     },
     logout() {
-      console.log('out');
       this.$http.post('LOGOUT')
         .then(resp=>{
           if ( resp.state === 1 ) {
             this.$message.success('退出成功');
+            this.$router.push('/login');
           }
         })
     },
@@ -326,6 +325,8 @@ export default {
     });
 
     this.loadNotices();
+
+    window.dialogChangePasswrod = this.dialogChangePasswrod;
   }
 }
 </script>

@@ -39,7 +39,7 @@
         <h3>{{moneyFormatter(accountInfo.accountBalance)}}</h3>
         <el-button 
           :type="accountInfo.accountBalance<=0?'info':'primary'" 
-          :disabled="accountInfo.accountBalance<=0"
+          :disabled="enableToWithdraw"
           @click="doWithdraw"
         >提现</el-button>
       </div>
@@ -178,6 +178,10 @@ export default {
     currentTabParams() {
       this.loadListData();
       return this[this.tab+'Params'];
+    },
+    enableToWithdraw() {
+      let ac = this.accountInfo;
+      return ac.isFirst? (ac.accountBalance>=50?true:false): (ac.accountBalance>0);
     }
   },
   methods: {
@@ -196,6 +200,7 @@ export default {
     doWithdraw() {
       let balance = this.accountInfo.accountBalance;
       if ( balance <= 0 ) return;
+      if ( this.accountInfo.isFirst==1 && balance<50 ) return;
       this.$http.post('DO_WITHDRAW', {withdrawAmount:balance})
       .then(resp=>{
         let text = '';

@@ -37,7 +37,9 @@
       <div class="inner-panel">
         <h3>商户资料</h3>
         <p>
-          <span>商户号：{{merchantInfo.merchantId}} <a href="javascript:void(0)" @click="changePassword">修改密码</a></span>
+          <span>商户号：{{merchantInfo.merchantId}}</span>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
           <span>商户名称：{{merchantInfo.merchantName}}</span>
         </p>
       </div>
@@ -45,6 +47,10 @@
         <h3>管理员信息</h3>
         <p>
           <span>登录帐号：{{merchantInfo.userName}}</span>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="javascript:void(0)" @click="changePassword">修改密码</a>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
           <span>姓名：{{merchantInfo.realName}}</span>
         </p>
       </div>
@@ -60,11 +66,11 @@
           <el-button type="primary" @click="dialogBind.show=true">立即绑定</el-button>
         </p>
       </div>
-      <div class="inner-panel">
+      <div class="inner-panel" v-if="mappCode.isBind">
         <h3>推广小程序二维码</h3> 
         <p>游客微信扫码后自主购买天气保障。购买成功后，分成佣金将结算到你的账户余额中。</p>
         <div id="mappCode" ref="mappWrapper" 
-          :style="`width:${mappCode.bgSize.width}px; height:${mappCode.bgSize.height}px`"
+          :style="`width:${mappCode.bgSize.width}px; height:${mappCode.bgSize.height}px; margin-bottom:12px;`"
         >
           <div style="height:0; overflow:hidden;">
             <img ref="mappBg"   src="~/assets/img/profile/bg-mapp.jpg" />
@@ -123,6 +129,7 @@ export default {
       dialogBind: this.getDefaultDialogBindParams(),
       wxUserInfo:null,
       mappCode: {
+        isBind  : false,
         bgSize  : { width:420, height:584 },
         codeSize: { width:250, height:250 },
         offset  : { x:85, y:249 },
@@ -163,7 +170,7 @@ export default {
       this.dialogBind.step += 1;
     },
     changePassword() {
-      
+      dialogChangePasswrod.show = true;
     },
     // 绑定微信账户
     bindWXAccount() {
@@ -208,7 +215,6 @@ export default {
         }
       })
     },
-
     generateMAppCode() {
       let { bgSrc, bgSize, codeSize, offset } = this.mappCode;
       let bg      = this.$refs.mappBg,
@@ -224,7 +230,6 @@ export default {
         this.mappCode.dataURL = this.$refs.mappCanvas.toDataURL('image/jpeg', 1);
       };
       code.src = `http://ts.baotianqi.cn/sellerMerchant/getWaferQrCode?token=${localStorage.token}`;
-      // code.src = `http://ts.baotianqi.cn/sellerMerchant/getWaferQrCode?token=A8B0251A5FED9138EDC13AD8C7C3B356`;
     },
     downloadMAppCode() {
       var save_link      = document.createElementNS('http://www.w3.org/1999/xhtml', 'a');
@@ -235,9 +240,19 @@ export default {
       event.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
       save_link.dispatchEvent(event);
     }, 
+    loadAccountData() {
+      this.$http.post('MERCHANT_ACCOUNT_INFO')
+      .then(resp=>{
+        this.accountInfo = resp.data;
+        if ( resp.data.isBind ) {
+          this.generateMAppCode();
+          this.mappCode.isBind = true;
+        }
+      })
+    },
   },
   mounted() {
-    this.generateMAppCode();
+    this.loadAccountData();
   }
 }
 </script>
