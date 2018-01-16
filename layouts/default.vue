@@ -19,7 +19,14 @@
         width:100%;
         height:calc( 100vh - 50px );
         overflow:auto; 
-        .page-container { min-width:1280px; }
+        .page-container { 
+          display:flex;
+          flex-direction:column;
+          // min-width:1280px; 
+          min-height:100%;
+          background:#fff;
+          border:20px solid #f5f5f5;
+        }
 
         // #page-container {
           // margin:$common-gap; 

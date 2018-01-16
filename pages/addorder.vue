@@ -1,6 +1,7 @@
 <style lang="scss">
   @import '~assets/css/base.scss';
   #page-addorder {
+    min-width:1300px;
     $mainWidth:800px;
     .huge { 
       font-size:36px; 
@@ -48,7 +49,7 @@
       }
     }
     #main {
-      display:flex;
+      display:flex; flex:1;
       @include border('top');
       .explain {
         margin-right:40px; width:140px; min-width:140px;
@@ -315,7 +316,7 @@
 </style>
 
 <template>
-  <div id="page-addorder" class="panel">
+  <div id="page-addorder">
     <ul id="process-bar">
       <li 
         v-for="(p,i) in process.data"

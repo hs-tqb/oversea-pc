@@ -1,6 +1,7 @@
 <style lang="scss">
   @import '~assets/css/base.scss';
   #page-query {
+    width:1600px;
     .el-table,
     .el-table__body-wrapper, 
     .el-table__footer-wrapper, 
@@ -10,7 +11,7 @@
 
     .filter-wrapper {
       // .inner-wrapper { display:flex; flex-direction:row; }
-      padding:12px;
+      // padding:12px;
       .inner-wrapper { margin:8px 0; }
       .el-input { width:230px; }
       span.label:not(:first-child) { margin-left:48px; }
@@ -30,18 +31,17 @@
 
 <template>
   <div id="page-query">
-    <div class="filter-wrapper">
+    <div class="filter-wrapper panel">
       <div class="inner-wrapper">
         &nbsp;&nbsp;
         <span class="label">订单号：</span>
-        <el-input v-model="params.innerOrderId" size="small">
+        <el-input v-model="params.innerOrderId" size="small" style="width:165px">
           <!-- <template slot="prepend">订单号</template> -->
         </el-input>
         <span class="label">被保人手机：</span>
-        <el-input v-model="params.buyerMobile" size="small">
+        <el-input v-model="params.buyerMobile" size="small"  style="width:202px;">
           <!-- <template slot="prepend">手机号</template> -->
         </el-input>
-        &nbsp;
         <span class="label">下单日期：</span>
         <el-date-picker
           v-model="datePickerOptions.dateRange"
@@ -64,7 +64,7 @@
           <el-radio-button label="1">有效</el-radio-button>
           <el-radio-button label="0">无效</el-radio-button>
         </el-radio-group>
-        &ensp;&ensp;&ensp;&ensp;&ensp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;
         <span class="label">判定结果：</span>
         <el-radio-group v-model="params.triggerState" size="small">
           <el-radio-button label="">全部</el-radio-button>
@@ -83,7 +83,7 @@
         <el-button @click="loadDealList(true)">重置</el-button>
       </div>
     </div>
-    <div v-loading="dealListLoading">
+    <div class="panel" v-loading="dealListLoading">
       <el-table
         stripe
         highlight-current-row
@@ -346,7 +346,7 @@ export default {
       return code === 1? '正常': '已取消'
     },
     moneyFormatter(row, col) {
-      return (row[col.property]/100).toFixed(2);
+      return '￥'+(row[col.property]/100).toFixed(2);
     },
     dateFormatter(row,col) {
       return (row[col.property]).split(' ')[0]

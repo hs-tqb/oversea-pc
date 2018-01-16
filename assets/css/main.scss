@@ -24,6 +24,7 @@ html {
 ul { list-style:none; }
 i  { font-style:normal; }
 
-.panel { margin:$common-gap; background:#fff; }
+// .panel { margin:$common-gap; background:#fff; }
+.panel { padding:$common-gap; }
 
 .el-message__content { width:100%; padding-right:30px!important; }
