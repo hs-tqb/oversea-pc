@@ -32,6 +32,7 @@
   <div id="page-query">
     <div class="filter-wrapper">
       <div class="inner-wrapper">
+        &nbsp;&nbsp;
         <span class="label">订单号：</span>
         <el-input v-model="params.innerOrderId" size="small">
           <!-- <template slot="prepend">订单号</template> -->
@@ -40,6 +41,7 @@
         <el-input v-model="params.buyerMobile" size="small">
           <!-- <template slot="prepend">手机号</template> -->
         </el-input>
+        &nbsp;
         <span class="label">下单日期：</span>
         <el-date-picker
           v-model="datePickerOptions.dateRange"
@@ -62,6 +64,7 @@
           <el-radio-button label="1">有效</el-radio-button>
           <el-radio-button label="0">无效</el-radio-button>
         </el-radio-group>
+        &ensp;&ensp;&ensp;&ensp;&ensp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <span class="label">判定结果：</span>
         <el-radio-group v-model="params.triggerState" size="small">
           <el-radio-button label="">全部</el-radio-button>
