@@ -17,11 +17,12 @@
 <template>
   <div class="comp-orderDetail" v-if="!!orderInfo && !!triggerInfo && !!payoutRecord">
       <h3>晴天万里宝</h3>
+      <el-alert v-if="!safeguard.dateRange" title="该订单已取消" type="warning" :closable="false" show-icon></el-alert>
       <p>
         <b class="label">订&ensp;单&ensp;号：</b>
         {{orderId}}
       </p>
-      <p>
+      <p v-if="safeguard.dateRange">
         <b class="label">保障时间：</b>
         {{safeguard.dateRange[0]}} 至 {{safeguard.dateRange[1]}}
       </p>
@@ -165,7 +166,11 @@ export default {
   computed: {
     safeguard() {
       return (function(contracts, obj={}) {
-        obj.dateRange = [ contracts[0].sDate, contracts[contracts.length-1].eDate ];
+        if ( contracts ) {
+          obj.dateRange = [ contracts[0].sDate, contracts[contracts.length-1].eDate ];
+        } else {
+          obj.dateRange = null;
+        }
         obj.city      = lodash.uniq(contracts, 'city').map(c=>c.city);
         return obj;
       }(this.orderInfo.order.contracts))

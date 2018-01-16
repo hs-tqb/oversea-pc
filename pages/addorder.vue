@@ -97,6 +97,7 @@
                     flex-direction:row;
                     button { flex:1; margin-left:12px; height:100%; }
                   }
+                  .el-input.is-disabled .el-input__inner { color:#999; }
                 }
               }
             }
@@ -376,7 +377,7 @@
           <!-- 选择金额 -->
           <div class="tarrif">
             <div class="explain">
-              <h3><i class="el-icon-date"></i> 旅行行程</h3>
+              <h3><i class="el-icon-date"></i> 选择保费</h3>
               <p>保费越多，保障金额越高，上限为￥10000</p>
             </div>
             <div>
@@ -391,7 +392,7 @@
                 <div class="custom">
                   <a href="javascript:void(0)" @click="customPrice">其它价格</a>
                   <el-input
-                    v-show="tarrifsCustomEnable"
+                    v-show="tarrifs.customEnable"
                     :min="5" 
                     :max="200"
                     size="medium"
@@ -423,6 +424,7 @@
                   placeholder="请输入优惠码"
                   v-model="coupon.input"
                   :debounce="300"
+                  @blur="checkCouponCode"
                 >
                   <el-button slot="append" icon="el-icon-loading" v-if="coupon.checking">验证中</el-button>
                   <el-button slot="append" @click="checkCouponCode" v-else>确定</el-button>
@@ -598,16 +600,16 @@
         </div>
         <div class="info">
           <div class="travel">
-            <div class="explain"><h3><i class="el-icon-date"></i> 旅行行程</h3></div>
+            <div class="explain"><h3><i class="el-icon-date"></i> 保障计划</h3></div>
             <ul>
               <li v-for="(t,i) in travel">
                 <i>{{i+1}}</i>
-                {{formatDate(t.date,{keepYear:true,separator:'-'})}} {{computedCities[i].label}}
+                {{formatDate(t.date,{separator:'-'})}} {{computedCities[i].label}}
               </li>
             </ul>
           </div>
           <div class="payout">
-            <div class="explain"><h3><i class="el-icon-date"></i> 旅行行程</h3></div>
+            <div class="explain"><h3><i class="el-icon-date"></i> 选择保费</h3></div>
             <div class="payout-preview">
               <table>
                 <thead>
@@ -698,7 +700,7 @@
         <p><b>订单号：</b> {{orderInfo.outTradeNo}}</p>
         <p><b>保障人：</b> {{insured.name}} {{insured.mobile}}</p>
         <p><b>保障地：</b> {{computedCities.map(c=>c.label).join('、')}}</p>
-        <p><b>保障时间：</b> {{formatDate(travel[0].date,{keepYear:true,separator:'-'})}} <b>至</b> {{formatDate(travel[travel.length-1].date,{keepYear:true,separator:'-'})}}</p>
+        <p><b>保障时间：</b> {{formatDate(travel[0].date,{separator:'-'})}} <b>至</b> {{formatDate(travel[travel.length-1].date,{separator:'-'})}}</p>
       </div>
       <div class="method">
         <h3>请选择以下支付方式
@@ -790,7 +792,6 @@ export default {
       contractInfo: {},
       orderInfo   : {},
       // 资费选择
-      tarrifsCustomEnable:false,
       tarrifs: {
         tarrif: 10,
         customEnable:false,
@@ -860,11 +861,15 @@ export default {
         return c.label;
       }).filter(l=>!!l);
     },
+    computedOrderPrice() {
+      // 优先使用(展开的)自定义的价格
+      return ( (this.tarrifs.customEnable && this.tarrifs.custom) || (this.tarrifs.tarrif) ) *100
+    },
     computedPayoutRule() {
       return this.contractInfo.payoutRuleParam? 
         this.contractInfo.payoutRuleParam.split('|').map(r=>{
           let temp = r.split(':');
-          return { day:temp[0], fee:this.tarrifs.tarrif*temp[1] };
+          return { day:temp[0], fee:this.computedOrderPrice/100*temp[1] };
         }):
         [];
     },
@@ -874,10 +879,6 @@ export default {
         // 减去优惠金额
         - ( (this.coupon.isCollapsed? 0 : this.coupon.amount ) * 100 )
       );
-    },
-    computedOrderPrice() {
-      // 优先使用(展开的)自定义的价格
-      return ( (this.tarrifsCustomEnable && this.tarrifs.custom) || (this.tarrifs.tarrif) ) *100
     }
   },
   methods: {
@@ -997,8 +998,7 @@ export default {
 
       let d = new Date(datestr);
       let s = opt.separator||'.';
-      let y = !!opt.keepYear;
-      return `${y?d.getFullYear()+s:''}${ this.prefixZero(d.getMonth()+1) }${s}${ this.prefixZero(d.getDate()) }`;
+      return `${d.getFullYear()}${s}${ this.prefixZero(d.getMonth()+1) }${s}${ this.prefixZero(d.getDate()) }`;
     },
     formatMoney(n) {
       return (n/100).toFixed(2);
@@ -1019,15 +1019,14 @@ export default {
 
       this.$http.post('getContract', {
         productId:this.production.productId,
-        times: this.travel.map(t=>this.formatDate(t.date, {keepYear:true, separator:'-'})).join(','),
+        times: this.travel.map(t=>this.formatDate(t.date, {separator:'-'})).join(','),
         cityIds:this.computedCities.map(c=>c.value).join(','), 
       })
       .then(resp=>{ this.contractInfo = resp.state===1? resp.data: {message:resp.message}; })
       .catch(err=>{ this.contractInfo = { message:err }; })
     },
     customPrice() {
-      this.tarrifsCustomEnable = !this.tarrifsCustomEnable;
-      console.log( this.tarrifsCustomEnable )
+      this.tarrifs.customEnable = !this.tarrifs.customEnable;
     },
     changeTarrif(val, isCustom) {
       if ( !isCustom ) {
@@ -1036,7 +1035,7 @@ export default {
       } else {
         val = parseInt(val, 10);
         if ( isNaN(val) ) {
-          this.tarrifs.tarrif = this.tarrifs.data[0];
+          // this.tarrifs.tarrif = this.tarrifs.data[0];
         } else {
           if ( val > 200 ) {
             val = 200;
@@ -1065,7 +1064,7 @@ export default {
       }
       else if ( !mobile ) text = '请先输入手机号'
       else if ( !this.checkMobileValidity(mobile) ) text = '手机号码无效'
-      else if ( !productId ) text = '请求出错, 请登录'
+      else if ( !productId ) text = '请求出错, 请先登录'
       if (text) {
         this.$message.closeAll();
         this.$message.error(text);
@@ -1238,6 +1237,7 @@ export default {
 
   mounted() {
     if ( process.env.PATH_TYPE === 'development' ) {
+      return
       this.contractInfo = {"threshold": "10","contractId": "167812121","payoutRuleParam": "1:2|2:3" }
       this.travel = JSON.parse('[{"date":"2018-01-15","city":["t2000","t2100","t2101"]},{"date":"2018-1-16","city":["t2000","t2100","t2101"]},{"date":"2018-1-17","city":["t2000","t2100","t2101"]}]')
       this.tarrifs=JSON.parse('{"tarrif":10,"custom":{},"data":[10,20,50,100]}')
