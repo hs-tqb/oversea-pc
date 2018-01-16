@@ -9,7 +9,7 @@
     }
     #process-bar { 
       @extend .flex-dir-row;
-      padding:30px 150px; 
+      padding:24px 150px; 
       // width:$mainWidth;
       li {
         display:flex;
@@ -52,7 +52,7 @@
       display:flex; flex:1;
       @include border('top');
       .explain {
-        margin-right:40px; width:140px; min-width:140px;
+        margin-right:24px; width:140px; min-width:140px;
         h3 { color:$--color-text-primary; }
         p  { margin-top:5px; color:$--color-text-secondary; }
       }
@@ -65,7 +65,8 @@
         }
       }
       .btns-confirm {
-        button:first-child { margin-left:612px; }
+        button { margin-left:24px; margin-right:0; }
+        // button:first-child { margin-left:612px; }
       }
       & > div { flex:1; }
       // 行程
@@ -76,7 +77,7 @@
           width:$mainWidth;
           & > div {
             padding:$common-gap;
-            @extend .flex-dir-row;
+            &:not(.btns-confirm) { @extend .flex-dir-row; @include border('bottom'); }
             .el-input-group { width:auto; }
             // 行程
             &.travel {
@@ -115,7 +116,7 @@
               .row,
               .custom { display:flex; flex-direction:row; }
               .custom {
-                a { color:$--color-text-secondary; }
+                // a { color:$--color-text-secondary; }
                 .el-input { 
                   width:100px; 
                   input { text-align:center; }
@@ -124,6 +125,7 @@
               .coupon {
                 .tips { margin:15px 0 5px 0; cursor:pointer; }
                 .el-input-group { margin:0; width:300px; }
+                .text-empty { @extend .text-primary; }
               }
               // 自定义的默认不显示
               // .tarrif-custom {
@@ -174,10 +176,11 @@
       #complete {
         .explain { width:105px; }
         & > div { 
-          @extend .flex-dir-row; 
           padding:$common-gap;
-          width:$mainWidth;
-          &:not(:last-child) { @include border('bottom'); }
+          &:not(.btns-confirm) { @extend .flex-dir-row; @include border('bottom'); }
+          
+          // width:$mainWidth;
+          // &:not(:last-child) { @include border('bottom'); }
           // &:not(:last-child) { margin-bottom:$common-gap; }
         }
         .info { 
@@ -189,9 +192,10 @@
           }
           .travel { 
             min-width:370px; @include border('right'); 
+            ul { margin-right:100px; }
             li {
               white-space: nowrap;
-              margin-bottom:12px;
+              margin-bottom:24px;
               line-height:24px;
               i { display:inline-block; width:24px; text-align:center; background:$--border-color-base; border-radius:50%; }
             }
@@ -204,12 +208,13 @@
                 width:100%; 
                 tbody tr { height:57px; }
               }
-              p { margin-left:-145px; }
+              // p { margin-left:-145px; }
               // flex:1 
             }
             .payout-standard {
-              margin-left:30px;
-              width:245px;
+              // margin-left:30px;
+              // width:245px;
+              margin-top:24px;
               table td { height:36px; background:#fff; }
             }
           }
@@ -220,7 +225,7 @@
           // & > *:not(:last-child) { margin-right:20px; }
           p { margin-right:20px; }
           .huge { line-height:26px; }
-          .el-alert { padding:0 8px; width:auto;  }
+          .el-alert { padding:0 8px; width:auto; height:26px; }
         }
       }
       // 完成
@@ -391,7 +396,7 @@
                   ></el-radio-button>
                 </el-radio-group>
                 <div class="custom">
-                  <a href="javascript:void(0)" @click="customPrice">其它价格</a>
+                  <a href="javascript:void(0)" class="text-primary" @click="customPrice">其它金额</a>
                   <el-input
                     v-show="tarrifs.customEnable"
                     :min="5" 
@@ -413,7 +418,7 @@
                 >
                   <i :class="`el-icon-caret-${coupon.isCollapsed?'bottom':'top'}`"></i>
                   <span v-if="coupon.isCollapsed">
-                    {{coupon.text['empty']}}
+                    {{coupon.text['init']}}
                   </span>
                   <span v-else>
                     {{coupon.state==='empty'?'':coupon.code}}
@@ -457,8 +462,7 @@
           </div>
           <!-- 提交按钮 -->
           <div class="btns-confirm">
-            <el-button type="primary" @click="nextStep(process.name)">提交</el-button>
-            <el-button @click="prevStep" v-if="process.index">取消</el-button>
+            <el-button type="primary" @click="nextStep(process.name)">下一步</el-button>
           </div>
         </div>
         <div id="safeguard-border"></div>
@@ -581,7 +585,7 @@
           v-if="process.name==='complete'" 
           class="payment-result" 
           :class="payment.state==='none'?'':payment.state"
-        >
+         >
           <!-- 支付成功 -->
           <template v-if="payment.state==='success'">
             <i class="el-icon-circle-check-outline"></i>
@@ -601,16 +605,19 @@
         </div>
         <div class="info">
           <div class="travel">
-            <div class="explain"><h3><i class="el-icon-date"></i> 保障计划</h3></div>
+            <div class="explain"><h3><i class="el-icon-date"></i> 旅行行程</h3></div>
             <ul>
               <li v-for="(t,i) in travel">
                 <i>{{i+1}}</i>
-                {{formatDate(t.date,{separator:'-'})}} {{computedCities[i].label}}
+                &nbsp;&nbsp;
+                {{formatDate(t.date,{separator:'-'})}}
+                &nbsp;&nbsp;
+                {{computedCities[i].label}}
               </li>
             </ul>
           </div>
           <div class="payout">
-            <div class="explain"><h3><i class="el-icon-date"></i> 选择保费</h3></div>
+            <div class="explain"><h3><i class="el-icon-date"></i> 保障计划</h3></div>
             <div class="payout-preview">
               <table>
                 <thead>
@@ -643,28 +650,38 @@
                 </tbody>
               </table>
               <p>旅游行程中只要当天降水量超过触发标准，就认为这天触发。具体触发天数和赔付金额对应如下表。</p>
-            </div>
-            <div class="payout-standard">
-              <table>
-                <thead>
-                  <tr>
-                    <td>触发天数</td>
-                    <td>赔付金额</td>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="(p,i) in computedPayoutRule">
-                    <td>{{p.day}}</td>
-                    <td>￥{{p.fee}}</td>
-                  </tr>
-                </tbody>
-              </table>
+              <div class="payout-standard">
+                <table>
+                  <thead>
+                    <tr>
+                      <td>触发天数</td>
+                      <td>赔付金额</td>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="(p,i) in computedPayoutRule">
+                      <td>{{p.day}}</td>
+                      <td>￥{{p.fee}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>
         <div class="tarrif">
-            <div class="explain"><h3><i class="el-icon-date"></i> 旅行行程</h3></div>
-            <p class="huge danger">￥{{formatMoney(computedPaymentFee)}}</p>
+            <div class="explain"><h3><i class="el-icon-date"></i> 选择保费</h3></div>
+            <div>
+              <p class="huge danger">￥{{formatMoney(computedOrderPrice)}}</p>
+              <p v-if="!coupon.isCollapsed && coupon.amount">&nbsp;优惠金额 -￥{{(coupon.amount)}}</p>
+            </div>
+            <el-alert
+              v-if="process.name==='confirm'"
+              title="订单支付后保障即刻生效，无法取消或退款。"
+              type="warning"
+              show-icon
+              :closable="false"
+            ></el-alert>
         </div>
         <div class="insured">
           <div class="explain"><h3><i class="el-icon-date"></i> 被保人信息</h3></div>
@@ -673,16 +690,17 @@
             {{insured.mobile}}
           </p>
           <el-alert
-            v-if="process==='confirm'"
+            v-if="process.name==='confirm'"
             title="手机号填错了会导致赔付款无法到账，请再三确认。"
-            type="info"
+            type="warning"
             show-icon
             :closable="false"
           ></el-alert>
         </div>
-        <div class="btns-confirm" v-if="process.name==='confirm'">
+        <div class="btns-confirm" v-if="process.name==='confirm'" style="text-align:center;">
+          <p class="huge">应支付：￥{{ formatMoney(computedPaymentFee) }}</p>
+          <el-button @click="prevStep">上一步</el-button>
           <el-button type="primary" @click="nextStep(process.name)">提交</el-button>
-          <el-button @click="prevStep">取消</el-button>
         </div>
         <div class="btns-confirm" v-if="process.name==='complete'" style="text-align:center;">
           <el-button type="primary" style="margin-left:512px;" @click="reorder">继续下单</el-button>
@@ -807,6 +825,7 @@ export default {
         amount:0,
         checking:false,
         text: {
+          'init' :'我有优惠码',
           'empty':'优惠金额将在支付时直接抵扣',
           'success':'，优惠码金额 ￥',
           'fail':'，优惠码无效'
@@ -1238,7 +1257,6 @@ export default {
 
   mounted() {
     if ( process.env.PATH_TYPE === 'development' ) {
-      return
       this.contractInfo = {"threshold": "10","contractId": "167812121","payoutRuleParam": "1:2|2:3" }
       this.travel = JSON.parse('[{"date":"2018-01-15","city":["t2000","t2100","t2101"]},{"date":"2018-1-16","city":["t2000","t2100","t2101"]},{"date":"2018-1-17","city":["t2000","t2100","t2101"]}]')
       this.tarrifs=JSON.parse('{"tarrif":10,"custom":{},"data":[10,20,50,100]}')
