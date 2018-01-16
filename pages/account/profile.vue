@@ -62,9 +62,9 @@
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
           <span>微信绑定手机：{{merchantInfo.mobile}}</span>
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-          <span>微信绑定状态：<i v-if="merchantInfo.verifyState===1" class="text-success">已绑定</i><i class="text-danger" v-else>未绑定</i></span>
+          <span>微信绑定状态：<i v-if="mappCode.isBind" class="text-success">已绑定</i><i class="text-danger" v-else>未绑定</i></span>
         </p>
-        <p v-if="merchantInfo.merchantId && merchantInfo.verifyState!==1">
+        <p v-if="merchantInfo.merchantId && !mappCode.isBind">
           <el-button type="primary" @click="dialogBind.show=true">立即绑定</el-button>
         </p>
       </div>
@@ -111,7 +111,7 @@
         <br>
         <br>
         <el-button type="normal" plain @click="dialogBind.step-=1">不是这个微信，返回修改</el-button>
-        <el-button type="success" @click="dialogBind.step+=1">确认</el-button>
+        <el-button type="success" @click="bindWXAccount">确认</el-button>
       </div>
       <div class="step step-4" v-else-if="dialogBind.step===4">
         <h4>以后就等着提现款微信到账吧！</h4>
@@ -131,7 +131,7 @@ export default {
       dialogBind: this.getDefaultDialogBindParams(),
       wxUserInfo:null,
       mappCode: {
-        isBind  : false,
+        isBind  : 0,
         bgSize  : { width:420, height:584 },
         codeSize: { width:250, height:250 },
         offset  : { x:85, y:249 },
@@ -174,10 +174,6 @@ export default {
     changePassword() {
       dialogChangePasswrod.show = true;
     },
-    // 绑定微信账户
-    bindWXAccount() {
-      console.log('bind wx account');
-    },
     checkMobileValidation(m) {
       return /^1[3456789]\d{9}$/.test(m);
     },
@@ -217,6 +213,17 @@ export default {
         }
       })
     },
+    // 绑定微信账户
+    bindWXAccount() {
+      // console.log('bind wx account');
+      let d = this.dialogBind;
+      this.$http.post('BIND_ACCOUNT', {mobile:d.mobile, merchantId:this.merchantInfo.merchantId})
+      .then(resp=>{
+        if ( resp.state ===1 ) {
+          this.nextStep();
+        }
+      })
+    },
     generateMAppCode() {
       let { bgSrc, bgSize, codeSize, offset } = this.mappCode;
       let bg      = this.$refs.mappBg,
@@ -247,8 +254,8 @@ export default {
       .then(resp=>{
         this.accountInfo = resp.data;
         if ( resp.data.isBind ) {
-          this.generateMAppCode();
           this.mappCode.isBind = true;
+          this.$nextTick(this.generateMAppCode);
         }
       })
     },

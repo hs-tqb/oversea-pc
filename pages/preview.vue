@@ -5,7 +5,7 @@
   #page .topbar { position:relative; height:100px; overflow:hidden; }
   #page .topbar .circle { 
     position:absolute; left:50%; z-index:1; transform:translate3d(-50%,-50%,0);
-    width:400px; height:200px; border-radius:50%; background:rgba(200,0,0, 1) 
+    width:400px; height:200px; border-radius:50%; background:red url('~assets/img/icon-eye-opened.png') no-repeat bottom/cover;
   }
   #page .topbar .inner-wrapper { position:relative; z-index:10; color:#fff; }
 </style>
