@@ -51,7 +51,7 @@
       display:flex;
       @include border('top');
       .explain {
-        margin-right:40px; width:140px;
+        margin-right:40px; width:140px; min-width:140px;
         h3 { color:$--color-text-primary; }
         p  { margin-top:5px; color:$--color-text-secondary; }
       }
@@ -87,9 +87,9 @@
                   margin-bottom:10px;
                   height:40px;
                   > i { display: inline-block; margin:5px 10px 0 0; width:30px; height:30px; line-height:30px; text-align:center; border-radius:50%; background:#ddd; }
-                  .date { margin-right:20px; width:280px; }
+                  .date { margin-right:20px; /*width:280px;*/ }
                   .city { 
-                    width:280px;
+                    // width:280px;
                   }
                   .control { 
                     // height:auto; direction:rtl; 

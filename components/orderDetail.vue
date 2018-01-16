@@ -16,20 +16,22 @@
 
 <template>
   <div class="comp-orderDetail" v-if="!!orderInfo && !!triggerInfo && !!payoutRecord">
-      <h3>晴天万里宝</h3>
       <el-alert v-if="!safeguard.dateRange" title="该订单已取消" type="warning" :closable="false" show-icon></el-alert>
-      <p>
-        <b class="label">订&ensp;单&ensp;号：</b>
-        {{orderId}}
-      </p>
-      <p v-if="safeguard.dateRange">
-        <b class="label">保障时间：</b>
-        {{safeguard.dateRange[0]}} 至 {{safeguard.dateRange[1]}}
-      </p>
-      <p>
-        <b class="label">保障城市：</b>
-        {{safeguard.city.join('、')}}
-      </p>
+      <h3>晴天万里宝</h3>
+      <template v-if="safeguard.dateRange">
+        <p>
+          <b class="label">订&ensp;单&ensp;号：</b>
+          {{orderId}}
+        </p>
+        <p>
+          <b class="label">保障时间：</b>
+          {{safeguard.dateRange[0]}} 至 {{safeguard.dateRange[1]}}
+        </p>
+        <p>
+          <b class="label">保障城市：</b>
+          {{safeguard.city.join('、')}}
+        </p>
+      </template>
       <h4>购买信息</h4>
       <p>
         <b class="label">渠&ensp;道&ensp;号：</b>
