@@ -911,7 +911,9 @@ export default {
           this.$message.closeAll();
           return this.$message.error('提交失败, '+text);
         }
-        this.gotoStep( this.process.index + 1 );
+        this.loadContractInfo(()=>{
+          this.gotoStep( this.process.index + 1 );
+        })
       } else if (name === 'confirm') {
         let couponCode   = this.coupon.isCollapsed? undefined: (this.coupon.state === 'success'? this.coupon.code: undefined);
         this.$http.post('addOrder', {
@@ -922,34 +924,34 @@ export default {
           insuredInfo: `${this.insured.name}:${this.insured.mobile}`,
           mobile     : this.insured.mobile
         })
-          .then(resp=>{
-            if ( resp.state !== 1 ) {
-              throw resp.message;
-            }
-            this.orderInfo = resp.data;
-            if ( resp.data.immediatePay === 1 ) {
-              this.paymentDialog = true;
-              this.$nextTick(()=>{
-                CountDown.closeBySign('tqbPaymentCountdown');
-                CountDown.openTimeCountBySeconds({
-                  Ele: this.$refs.tqbPaymentCountdown,
-                  CountDownSeconds:1200,
-                  // CountDownSeconds:30,
-                  Sign   : 'tqbPaymentCountdown',
-                  Divider: ':',
-                  EndFunc: ()=>{
-                    this.paymentDialog   = false;
-                    this.wxPaymentDialog = false;
-                    this.payment.state   = 'timeout';
-                    this.gotoStep( this.process.index + 1 );
-                  }
-                });
-              })
-            } else {
-              this.payment.state = 'success';
-              this.gotoStep( this.process.index + 1 );
-            }
-          })
+        .then(resp=>{
+          if ( resp.state !== 1 ) {
+            throw resp.message;
+          }
+          this.orderInfo = resp.data;
+          if ( resp.data.immediatePay === 1 ) {
+            this.paymentDialog = true;
+            this.$nextTick(()=>{
+              CountDown.closeBySign('tqbPaymentCountdown');
+              CountDown.openTimeCountBySeconds({
+                Ele: this.$refs.tqbPaymentCountdown,
+                CountDownSeconds:1200,
+                // CountDownSeconds:30,
+                Sign   : 'tqbPaymentCountdown',
+                Divider: ':',
+                EndFunc: ()=>{
+                  this.paymentDialog   = false;
+                  this.wxPaymentDialog = false;
+                  this.payment.state   = 'timeout';
+                  this.gotoStep( this.process.index + 1 );
+                }
+              });
+            })
+          } else {
+            this.payment.state = 'success';
+            this.gotoStep( this.process.index + 1 );
+          }
+        })
       }
     },
     prevStep() {
@@ -1025,7 +1027,7 @@ export default {
     prefixZero(n) {
       return n>9? n: '0'+n;
     },
-    loadContractInfo() {
+    loadContractInfo(callback) {
       // 如果没有填满, 则不获取订单
       if ( !this.travel.every(d=>d.date&&d.city&&d.city.length) ) {
         return;
@@ -1041,7 +1043,15 @@ export default {
         times: this.travel.map(t=>this.formatDate(t.date, {separator:'-'})).join(','),
         cityIds:this.computedCities.map(c=>c.value).join(','), 
       })
-      .then(resp=>{ this.contractInfo = resp.state===1? resp.data: {message:resp.message}; })
+      .then(resp=>{ 
+        // this.contractInfo = resp.state===1? resp.data: {message:resp.message}; 
+        if ( resp.state === 1 ) {
+          this.contractInfo = resp.data;
+          typeof callback === 'function' && callback(resp.data);
+        } else {
+          this.contractInfo = {message:resp.message};
+        }
+      })
       .catch(err=>{ this.contractInfo = { message:err }; })
     },
     customPrice() {
