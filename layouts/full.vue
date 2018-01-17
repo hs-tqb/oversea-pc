@@ -1,4 +1,4 @@
-<style lang="scss" scoped>
+<style lang="scss">
   @import '~assets/css/base.scss';
 
   #layout-root { 
@@ -21,5 +21,8 @@ import axios from '~/plugins/axios'
 Vue.prototype.$http = axios
 
 export default {
+  data() {
+    return {}
+  }
 }
 </script>
