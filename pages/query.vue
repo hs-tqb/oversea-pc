@@ -182,7 +182,7 @@
             <el-button type="text" size="small">详情</el-button>
             <el-button type="text" size="small" v-if="scope.row.payState===1" @click.stop="sendContract(scope.row)">发送合约</el-button>
             <el-button type="text" size="small"
-              v-if="((scope.row.payState == 1) && checkTimeIsInLastHour(scope.row.gmtCreate) && (scope.row.paymentType==2))"
+              v-if="((scope.row.payState == 1) && (scope.row.paymentType==2) && checkTimeIsInLastHour(scope.row.gmtCreate) )"
               @click.stop="cancelOrder(scope.row)"
              >
               取消
