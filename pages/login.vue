@@ -6,7 +6,8 @@
     height:100%;
     #bg { 
       position:relative;
-      height:700px; 
+      height:700px;
+      min-height:700px;
       color:#fff;
       background:url('~assets/img/login/bg.png') no-repeat center/cover; 
       .inner { position:relative; margin:0 auto; width:1000px;; height:auto; }
@@ -43,6 +44,7 @@
     }
     #footer {
       flex:1;
+      min-height:397px;
       padding:1px;
       color:#b2b2b2;
       background:#171B26; 
