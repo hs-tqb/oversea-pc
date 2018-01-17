@@ -349,7 +349,7 @@
               </p>
             </div>
             <ul class="picker">
-              <li v-for="(t,i) in travel" :v-key="`travel-d${i}`">
+              <li v-for="(t,i) in travel" :key="`travel-d${i}`">
                 <i>{{i+1}}</i>
                 <el-date-picker
                   class="date"
@@ -391,7 +391,7 @@
                 <el-radio-group v-model="tarrifs.tarrif" size="medium" @change="changeTarrif">
                   <el-radio-button 
                     v-for="(t,i) in tarrifs.data" 
-                    :v-key="`tarrif-${i}`"
+                    :key="`tarrif-${i}`"
                     :label="t"
                   ></el-radio-button>
                 </el-radio-group>
@@ -559,7 +559,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(p,i) in computedPayoutRule">
+                  <tr v-for="(p,i) in computedPayoutRule" :key="`payoutRule-${i}`">
                     <td>{{p.day}}</td>
                     <td>￥{{p.fee}}</td>
                   </tr>
@@ -568,7 +568,6 @@
             </div>
             <div class="payout-explain">
               <p>最终赔付金额以行程中天气实况所达到的最大触发天数为准</p>
-              <p v-for=""></p>
             </div>
           </template>
         </div>
@@ -607,7 +606,7 @@
           <div class="travel">
             <div class="explain"><h3><i class="el-icon-date"></i> 旅行行程</h3></div>
             <ul>
-              <li v-for="(t,i) in travel">
+              <li v-for="(t,i) in travel" :key="`travel-${i}`">
                 <i>{{i+1}}</i>
                 &nbsp;&nbsp;
                 {{formatDate(t.date,{separator:'-'})}}
@@ -659,7 +658,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="(p,i) in computedPayoutRule">
+                    <tr v-for="(p,i) in computedPayoutRule" :key="`payoutRule-${i}`">
                       <td>{{p.day}}</td>
                       <td>￥{{p.fee}}</td>
                     </tr>
@@ -1259,7 +1258,7 @@ export default {
     if ( process.env.PATH_TYPE === 'development' ) {
       this.contractInfo = {"threshold": "10","contractId": "167812121","payoutRuleParam": "1:2|2:3" }
       this.travel = JSON.parse('[{"date":"2018-01-15","city":["t2000","t2100","t2101"]},{"date":"2018-1-16","city":["t2000","t2100","t2101"]},{"date":"2018-1-17","city":["t2000","t2100","t2101"]}]')
-      this.tarrifs=JSON.parse('{"tarrif":10,"custom":{},"data":[10,20,50,100]}')
+      this.tarrifs=JSON.parse('{"tarrif":10,"custom":"","customEnable":false,"data":[10,20,50,100]}')
       this.insured=JSON.parse('{"name":"名字","mobile":"13131313131"}')
     }
   },

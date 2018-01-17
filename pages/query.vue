@@ -94,7 +94,7 @@
         <el-table-column
           width="50"
           label="序号">
-          <template scope="scope">
+          <template slot-scope="scope">
             {{ params.pageSize*(params.page-1) + scope.$index+1}}
           </template>
         </el-table-column>
@@ -146,7 +146,7 @@
         <!-- order.payState == 1 ? '正常': '已取消' -->
         <el-table-column
           label="订单状态">
-          <template scope="scope">
+          <template slot-scope="scope">
             <!-- <span :class="payStateParser(scope.row.payState)">
               {{ payStateFormatter(scope.row.payState) }}
             </span> -->
@@ -178,7 +178,7 @@
         </el-table-column>
         <el-table-column
           label="操作" width="120">
-          <template scope="scope">
+          <template slot-scope="scope">
             <el-button type="text" size="small">详情</el-button>
             <el-button type="text" size="small" v-if="scope.row.payState===1" @click.stop="sendContract(scope.row)">发送合约</el-button>
           </template>

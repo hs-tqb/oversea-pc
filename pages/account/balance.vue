@@ -72,7 +72,7 @@
             <el-table-column
               width="50"
               label="序号">
-              <template scope="scope">
+              <template slot-scope="scope">
                 {{ tradingData.pageSize*(tradingData.page-1) + scope.$index+1}}
               </template>
             </el-table-column>
@@ -83,10 +83,10 @@
             <el-table-column prop="dividedAmount" label="分成金额" width="100" :formatter="tradingMoneyFormatter" sortable>
             </el-table-column>
             <el-table-column label="业务种类" width="80">
-              <template scope="scope">交易</template>
+              <template slot-scope="scope">交易</template>
             </el-table-column>
             <el-table-column label="状态" width="65">
-              <template scope="scope">
+              <template slot-scope="scope">
                 <span v-if="scope.row.payState===1" class="text-success">已支付</span>
                 <span v-else class="text-danger">未支付</span>
               </template>
@@ -125,7 +125,7 @@
             <el-table-column
               width="50"
               label="序号">
-              <template scope="scope">
+              <template slot-scope="scope">
                 {{ withdrawalData.pageSize*(withdrawalData.page-1) + scope.$index+1}}
               </template>
             </el-table-column>
@@ -133,10 +133,10 @@
             <el-table-column prop="withdrawAmount" label="提现金额" :formatter="withdrawalMoneyFormatter" sortable>
             </el-table-column>
             <el-table-column label="业务种类">
-              <template scope="scope">提现</template>
+              <template slot-scope="scope">提现</template>
             </el-table-column>
             <el-table-column label="状态">
-              <template scope="scope">
+              <template slot-scope="scope">
                 <div v-html="parseWithdrawState(scope.row)"></div>
               </template>
             </el-table-column>

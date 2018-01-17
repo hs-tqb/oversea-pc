@@ -88,7 +88,7 @@
       <el-table :data="triggerStandar" style="width:100%;" border stripe>
         <el-table-column prop="cityName" label="城市"></el-table-column>
         <el-table-column label="触发标准">
-          <template scope="scope">
+          <template slot-scope="scope">
             <span style="margin-left: 10px">日降雨 > {{ scope.row.triggerRuleParam }} mm</span>
           </template>
         </el-table-column>
@@ -97,12 +97,12 @@
       <!-- 赔付标准 -->
       <el-table :data="triggerPayoutStandar" style="width:100%;" :show-header="false" border stripe>
         <el-table-column>
-          <template scope="scope">
+          <template slot-scope="scope">
             触发 {{scope.row.day}} 天
           </template>
         </el-table-column>
         <el-table-column>
-          <template scope="scope">
+          <template slot-scope="scope">
             赔付金额为 ￥{{moneyFormatter(scope.row.amount)}} 元
           </template>
         </el-table-column>
@@ -112,7 +112,7 @@
         <el-table-column label="日期" prop="realWeatherDate"></el-table-column>
         <el-table-column label="地点" prop="cityName"></el-table-column>
         <el-table-column width="80" label="查询实况">
-          <template scope="scope">
+          <template slot-scope="scope">
             <a :href="scope.row.weatherUrl" target="_blank">查看详情</a>
           </template>
         </el-table-column>

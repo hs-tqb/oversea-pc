@@ -64,6 +64,7 @@
         <el-dropdown-menu slot="dropdown" class="notice-popper">
           <el-dropdown-item 
             v-for="(n,i) in dialogNotice.data" 
+            :key="`notice-${i}`"
             :command="i" 
             :class="n.state===0?'unread':''"
           >{{n.title}}</el-dropdown-item>
