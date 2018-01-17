@@ -181,6 +181,12 @@
           <template slot-scope="scope">
             <el-button type="text" size="small">详情</el-button>
             <el-button type="text" size="small" v-if="scope.row.payState===1" @click.stop="sendContract(scope.row)">发送合约</el-button>
+            <el-button type="text" size="small"
+              v-if="((scope.row.payState == 1) && checkTimeIsInLastHour(scope.row.gmtCreate) && (scope.row.paymentType==2))"
+              @click.stop="cancelOrder(scope.row)"
+             >
+              取消
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -270,6 +276,7 @@ export default {
           }
         }]
       },
+      dealTime:0,
       dealList:null,
       dealListLoading:true,
       orderDetail: {
@@ -372,6 +379,7 @@ export default {
       }
       this.$http.post('GET_DEAL_LIST',  this.params )
       .then(resp=>{
+        this.dealTime = resp.serverTime;
         this.dealList = resp.data;
         this.dealListLoading = false;
       })
@@ -472,6 +480,20 @@ export default {
       params.isDownloading = false;
       params.hasDownloaded = false;
       done();
+    },
+    checkTimeIsInLastHour(str) {
+      let time = +new Date(str);
+      if ( isNaN(time) ) {
+        time = +new Date(str.replace(/\-/g, "/").replace(/\.0$/, ""));
+      }
+      return (this.dealTime-time) < (3600000);  // 一个小时的毫秒数
+    },
+    cancelOrder(order) {
+      this.$http.post('CANCEL_DEAL', { innerOrderId:order.innerOrderId })
+      .then(resp=>{
+        if ( resp.state !== 1 ) return;
+        order.payState = 2;
+      })
     }
   },
   beforeMount() {
