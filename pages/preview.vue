@@ -1,49 +1,38 @@
 <style lang="scss">
-  @import '~assets/css/base.scss';
-
-  #page {  margin:100px;  width:300px; height:500px; outline:1px solid blue;  }
-  #page .topbar { position:relative; height:100px; overflow:hidden; }
-  #page .topbar .circle { 
-    position:absolute; left:50%; z-index:1; transform:translate3d(-50%,-50%,0);
-    width:400px; height:200px; border-radius:50%; background:red url('~assets/img/icon-eye-opened.png') no-repeat bottom/cover;
+  #page-preview {
+    .explain {
+      font-size:20px;
+      text-align:center;
+    }
   }
-  #page .topbar .inner-wrapper { position:relative; z-index:10; color:#fff; }
 </style>
 
 
 <template>
   <div id="page-preview">
-    预览预览
-
-
-    <!-- <style lang="scss">
-      #page {  margin:100px;  width:300px; height:500px; outline:1px solid blue;  }
-      #page .topbar { position:relative; height:100px; overflow:hidden; }
-      #page .topbar .circle { 
-        position:absolute; left:50%; z-index:1; transform:translate3d(-50%,-50%,0);
-        width:400px; height:200px; border-radius:50%; background:rgba(200,0,0, 1) 
-      }
-      #page .topbar .inner-wrapper { position:relative; z-index:10; color:#fff; }
-    </style> -->
-    <div id="page" style="">
-      <div class="topbar">
-        <div class="circle"></div>
-        <div class="inner-wrapper">
-          这里是头部
-        </div>
-      </div>
-      <div class="content">
-        这里是内容
-      </div>
+    <div class="explain panel">
+      <p v-if="audit===0" class="text-primary">
+        您的账号正在审核中，请耐心等待。
+        <br>审核通过后将开通所有功能。
+        <br>请您保持手机畅通，我们的工作人员将与您联系。
+      </p>
+      <p v-else-if="audit===1" class="text-success">审核成功</p>
+      <p v-else-if="audit===2" class="text-danger">
+        抱歉，您的账号未通过审核，无法为您开通产品。
+        <br>请联系天气宝客服
+        <br><a href="mailto:service@utianqi.com">service@utianqi.com</a>
+      </p>
     </div>
-
   </div>
 </template>
 
 <script>
 export default {
   data() {
-    return {}
+    return {
+      // 审核中:0; 审核成功:1; 审核失败:2; 
+      audit:this.$store.state.merchantInfo.verifyState
+    }
   }
 }
 </script>

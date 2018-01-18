@@ -46,6 +46,9 @@ module.exports = {
   // generate: {
   //   dir:'seller2'
   // },
+  router: {
+    middleware: ['checkMerchantVerifyState']
+  },
   build: {
     // publicPath:'/seller2/_nuxt/',
     extractCSS:true,  // 打包css

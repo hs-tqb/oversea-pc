@@ -321,11 +321,18 @@ export default {
   mounted() {
     this.$http.post('USER_INFO')
     .then(resp=>{
+      if ( resp.state !== 1 ) return;
       this.merchantInfo = resp.data.merchantInfo;
       this.$store.commit('saveMerchantInfo', resp.data.merchantInfo);
+
+      if ( this.merchantInfo.verifyState!==1 ) {
+        this.$route.redirect('/preview');
+      } else {
+        this.loadNotices();
+      }
+
     });
 
-    this.loadNotices();
 
     window.dialogChangePasswrod = this.dialogChangePasswrod;
   }
