@@ -25,7 +25,7 @@
       }
       .brand {
         &.is-active, &:hover, &:active { background:$bg!important; color:$activeCl!important; }
-        i { display:inline-block; margin-left:-12px; @include square($logoSize); background:url('~/static/img/logo.png') no-repeat center/cover; }
+        i { display:inline-block; margin-left:-12px; @include square($logoSize); background:url('~/assets/img/logo.png') no-repeat center/cover; }
         span { margin-left:12px; font-size:24px; color:#fff; }
       }
       .el-menu-item-group__title { display:none; }

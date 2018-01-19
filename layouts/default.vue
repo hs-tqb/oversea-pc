@@ -8,7 +8,7 @@
       @extend .flex-1; 
       width :calc( 100vh - 200px );
       height:100vh;
-      background:#f5f5f5;
+      // background:#f5f5f5;
       
       &.sidebarCollapsed {
           width: calc( 100vw - 64px );
@@ -25,7 +25,7 @@
           // min-width:1280px; 
           min-height:100%;
           background:#fff;
-          border:20px solid #f5f5f5;
+          border:20px solid #e5e5e5;
         }
 
         // #page-container {

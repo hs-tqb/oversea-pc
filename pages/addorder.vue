@@ -4,12 +4,12 @@
     min-width:1300px;
     $mainWidth:800px;
     .huge { 
-      font-size:36px; 
+      font-size:32px; 
       &.danger { color:$--color-danger; }
     }
     #process-bar { 
       @extend .flex-dir-row;
-      padding:24px 150px; 
+      padding:24px 210px; 
       // width:$mainWidth;
       li {
         display:flex;
@@ -17,7 +17,7 @@
         $line:32px;
         line-height:$line;
         font-size:16px;
-        i { 
+        i {
           display:inline-block; 
           margin-right:5px;
           @include square($line);
@@ -25,9 +25,11 @@
           text-align:center;
           vertical-align:top;
           color:inherit;
-          border:1px solid $--border-color-base; 
+          border:2px solid $--border-color-base; 
           @extend .disc;
         }
+        i.icon { display:none; }
+
         span {line-height:inherit; }
         b { flex:1; margin:15px 10px; /*background:$--border-color-base;*/ @include border('top'); }
         &:last-child { 
@@ -40,11 +42,13 @@
         }
         &.doing {
           i { color:#fff; background:$--color-primary; border-color:$--color-primary; }
-          span { font-weight:bold; color:$--color-text-primary; }
+          span { color:$--color-text-primary; }
         }
         &.done  {
-          color:$--color-text-secondary;
-          i { color:#fff; background:$--color-success; border-color:$--color-success; }
+          // color:$--color-text-primary;
+          i.number { display:none; }
+          i.icon { display:block; font-size:20px; font-weight:bold; color:$--color-primary; border-color:$--color-primary; }
+          b { border-color:$--color-primary; }
         }
       }
     }
@@ -52,20 +56,24 @@
       display:flex; flex:1;
       @include border('top');
       .explain {
-        margin-right:24px; width:140px; min-width:140px;
-        h3 { color:$--color-text-primary; }
+        margin-right:48px; width:140px; min-width:140px;
+        h3 { line-height:32px; color:$--color-text-primary; }
         p  { margin-top:5px; color:$--color-text-secondary; }
       }
       .payout-standard {
         table {
-          width:100%;
+          margin:12px 0; width:100%;
           border-collapse:collapse;
           thead { font-weight:bold; }
-          td { height:54px; text-align:center; @include border(false); }
+          td { height:32px; text-align:center; @include border(false); }
         }
       }
       .btns-confirm {
+        // text-align:right;
+        text-align:center;
         button { margin-left:24px; margin-right:0; }
+        p.huge { margin-bottom:12px; color:$--color-text-primary; }
+        p.huge + button { margin-left:0; }
         // button:first-child { margin-left:612px; }
       }
       & > div { flex:1; }
@@ -86,18 +94,19 @@
                 // min-width:583px;
                 > li {
                   @extend .flex-dir-row; 
-                  margin-bottom:10px;
-                  height:40px;
-                  > i { display: inline-block; margin:5px 10px 0 0; width:30px; height:30px; line-height:30px; text-align:center; border-radius:50%; background:#ddd; }
-                  .date { margin-right:20px; /*width:280px;*/ }
+                  // margin-bottom:10px;
+                  &:not(:last-child) { margin-bottom:24px; }
+                  // height:40px;
+                  > i { display: inline-block; margin:4px 10px 0 0; width:24px; height:24px; line-height:24px; text-align:center; background:#ddd; }
+                  .date { margin-right:20px; /*width:280px;*/ width:200px; }
                   .city { 
-                    // width:280px;
+                    width:200px;
                   }
                   .control { 
                     // height:auto; direction:rtl; 
                     display:flex;
                     flex-direction:row;
-                    button { flex:1; margin-left:12px; height:100%; }
+                    button { flex:1; margin-left:24px;  }
                   }
                   .el-input.is-disabled .el-input__inner { color:#999; }
                 }
@@ -122,9 +131,16 @@
                   input { text-align:center; }
                 }
               }
+              .el-radio-group {
+                span { width:50px; }
+              }
               .coupon {
-                .tips { margin:15px 0 5px 0; cursor:pointer; }
-                .el-input-group { margin:0; width:300px; }
+                .tips { margin:22px 0 0px 0; cursor:pointer; }
+                .el-input-group { 
+                  margin:5px 0 0 0; 
+                  // width:300px; 
+                  input { width:200px; }
+                }
                 .text-empty { @extend .text-primary; }
               }
               // 自定义的默认不显示
@@ -145,30 +161,60 @@
               .input-group { 
                 @extend .flex-dir-row; 
                 .el-input-group { 
-                  flex:1;
+                  // flex:1;
+                  // width:240px;
+                  margin:0;
                   &:first-child { 
                     margin-right:24px; 
-                    input { width:165px; }
+                    input { width:196px; }
                   }
+                  .el-input-group__prepend { padding-left:10px; padding-right:10px; }
+                  input { width:200px; }
                 }
               }
             }
           }
+          .el-date-editor .el-input__prefix { display:none; }
+          .el-date-editor .el-input__inner { padding:0 10px; }
         }
         #safeguard-border {
-          width:1px;
-          @include border('left');
+          // width:1px;
+          // @include border('left');
         }
+        // #safeguard-detail {
+        //   box-shadow:-1px -1px 3px rgba(0,0,0,0.2);
+        //   position:relative; z-index:10;
+        //   background:#f5f5f5;
+        //   .explain {
+        //     margin-right:0; width:auto;
+        //     &:not(:first-child) { margin-top:24px; }
+        //   }
+        //   h4 { font-weight:normal; color:#333; }
+        //   width:420px;
+        //   table  {
+        //     width:100%;
+        //     td { width:50%; line-height:32px; }
+        //     h4 { display:inline; }
+        //   }
+        //   .date, .city { margin-top:12px; }
+        // }
         #safeguard-detail {
+          position:relative; z-index:10; width:420px;
+          box-shadow:-1px -1px 3px rgba(0,0,0,0.2);
+          background:$--color-primary;
+          * { color:#fff; }
           .explain {
             margin-right:0; width:auto;
+            &:not(:first-child) { margin-top:24px; }
           }
-          width:420px;
+          .huge.danger td { color:#ff0; }
+          .date, .city { margin-top:12px; }
+          h4 { font-weight:normal; }
           table  {
             width:100%;
-            td { width:50%; }
+            td { width:50%; line-height:32px; }
+            h4 { display:inline; margin-right:10px; }
           }
-          & > div { margin-bottom:30px; }
         }
       }
       // 计划确认
@@ -183,29 +229,30 @@
           // &:not(:last-child) { @include border('bottom'); }
           // &:not(:last-child) { margin-bottom:$common-gap; }
         }
-        .info { 
-          padding:0;
-          width:auto;
-          & > div {
-            @extend .flex-dir-row; 
-            padding:$common-gap;
-          }
+        // .info { 
+        //   padding:0;
+        //   width:auto;
+        //   & > div {
+        //     @extend .flex-dir-row; 
+        //     padding:$common-gap;
+        //   }
           .travel { 
             min-width:370px; @include border('right'); 
             ul { margin-right:100px; }
             li {
               white-space: nowrap;
-              margin-bottom:24px;
-              line-height:24px;
-              i { display:inline-block; width:24px; text-align:center; background:$--border-color-base; border-radius:50%; }
+              &:not(:last-child) { margin-bottom:24px; }
+              height:32px;
+              i { display:inline-block; margin-top:4px; width:24px; height:24px; line-height:24px; text-align:center; background:$--border-color-base; }
             }
           }
           .payout {
             flex:1; 
             .payout-preview { 
-              width:420px;
+              // width:420px;
               table { 
-                width:100%; 
+                thead { height:32px; line-height:32px; }
+                width:380px; 
                 tbody tr { height:57px; }
               }
               // p { margin-left:-145px; }
@@ -213,12 +260,12 @@
             }
             .payout-standard {
               // margin-left:30px;
-              // width:245px;
+              width:300px;
               margin-top:24px;
-              table td { height:36px; background:#fff; }
+              table td { padding:0; height:36px; background:#fff; }
             }
           }
-        }
+        // }
         .tarrif,
         .insured {
           // line-height:26px;
@@ -263,6 +310,7 @@
     .el-dialog { background:#f5f5f5; @extend .radius5; }
     .el-dialog__title { font-size:24px; color:#317eac; }
     .el-dialog__body { padding:8px 20px; }
+    .el-dialog__header { padding:15px 20px 5px 20px; }
     .info {
       padding:12px;
       background:#fff;
@@ -328,7 +376,8 @@
         :key="`porcess-${i}`"
         :class="process.index===i?'doing':(process.index>i?'done':'wait')"
       >
-        <i>{{i+1}}</i>
+        <i class="number">{{i+1}}</i>
+        <i class="icon el-icon-check"></i>
         <span>{{p.text}}</span>
         <b></b>
       </li>
@@ -354,14 +403,15 @@
                 <el-date-picker
                   class="date"
                   type="date"
-                  placeholder="选择日期"
+                  placeholder="日期"
                   :editable="false"
                   :disabled="i!==0"
-                  format="yyyy 年 MM 月 dd 日"
+                  format="yyyy-MM-dd"
                   value-format="yyyy-MM-dd"
                   v-model="t.date"
                   :picker-options="dateOptions"
                   @change="datePicked($event, i)"
+                  size="small"
                 ></el-date-picker>
                 <el-cascader
                   class="city"
@@ -372,23 +422,46 @@
                   :options="cityOptions"
                   :clearable="true"
                   @change="cityPicked($event, i)"
+                  size="small"
                 ></el-cascader>
                 <div class="control" v-if="i>=2">
-                  <el-button v-if="i>2" size="small" type="danger" plain @click="delTravel(i)">删除</el-button>
-                  <el-button size="small" type="primary" @click="addTravel">添加</el-button>
+                  <el-button size="small" @click="addTravel" plain>添加</el-button>
+                  <el-button v-if="i>2" size="small" class="text-danger" plain @click="delTravel(i)" plain>删除</el-button>
                 </div>
               </li>
             </ul>
           </div>
+          <!-- 被保人信息填写 -->
+          <div class="insured">
+            <div class="explain">
+              <h3><i class="el-icon-date"></i> 被保人信息</h3>
+              <p>保费越多，保障金额越高，上限为￥10000</p>
+            </div>
+            <div class="input-group">
+              <el-input 
+                v-model="insured.name" 
+                placeholder="请输入内容"
+                size="small"
+                clearable
+              ><el-button slot="prepend" icon="el-icon-search"></el-button></el-input>
+              <el-input 
+                v-model="insured.mobile" 
+                placeholder="请输入内容"
+                :maxlength="11"
+                size="small"
+                clearable
+              ><el-button slot="prepend" icon="el-icon-phone"></el-button></el-input>
+            </div>
+          </div>
           <!-- 选择金额 -->
           <div class="tarrif">
             <div class="explain">
-              <h3><i class="el-icon-date"></i> 选择保费</h3>
+              <h3><i class="el-icon-date"></i> 「保费」</h3>
               <p>保费越多，保障金额越高，上限为￥10000</p>
             </div>
             <div>
               <div class="row">
-                <el-radio-group v-model="tarrifs.tarrif" size="medium" @change="changeTarrif">
+                <el-radio-group v-model="tarrifs.tarrif" size="small" @change="changeTarrif">
                   <el-radio-button 
                     v-for="(t,i) in tarrifs.data" 
                     :key="`tarrif-${i}`"
@@ -401,7 +474,7 @@
                     v-show="tarrifs.customEnable"
                     :min="5" 
                     :max="200"
-                    size="medium"
+                    size="small"
                     placeholder="5 ~ 200"
                     v-model="tarrifs.custom"
                     :autofocus="true"
@@ -431,33 +504,12 @@
                   v-model="coupon.input"
                   :debounce="300"
                   @blur="checkCouponCode"
+                  size="small"
                 >
                   <el-button slot="append" icon="el-icon-loading" v-if="coupon.checking">验证中</el-button>
                   <el-button slot="append" @click="checkCouponCode" v-else>确定</el-button>
                 </el-input>
               </div>
-            </div>
-          </div>
-          <!-- 被保人信息填写 -->
-          <div class="insured">
-            <div class="explain">
-              <h3><i class="el-icon-date"></i> 确认被保人信息</h3>
-              <p>保费越多，保障金额越高，上限为￥10000</p>
-            </div>
-            <div class="input-group">
-              <el-input 
-                v-model="insured.name" 
-                placeholder="请输入内容"
-                size="medium"
-                clearable
-              ><template slot="prepend">被保人姓名</template></el-input>
-              <el-input 
-                v-model="insured.mobile" 
-                placeholder="请输入内容"
-                :maxlength="11"
-                size="medium"
-                clearable
-              ><template slot="prepend">手机号</template></el-input>
             </div>
           </div>
           <!-- 提交按钮 -->
@@ -468,8 +520,8 @@
         <div id="safeguard-border"></div>
         <div id="safeguard-detail" class="panel" v-loading="contractInfo.loading">
           <div class="explain">
-            <h3>保障计划</h3>
-            <p>每次修改旅行时间和目的地，保障计划都会实时更新</p>
+            <h3><i class="el-icon-date"></i> 保障计划</h3>
+            <!-- <p>每次修改旅行时间和目的地，保障计划都会实时更新</p> -->
           </div>
           <template v-if="contractInfo.loading">
             <h3 style="text-align:center;">正在奋力查询<br>保障计划详情</h3>
@@ -494,7 +546,7 @@
                 <thead>
                   <tr>
                     <td>
-                      最高保障金额
+                      <h4>最高保障金额</h4>
                       <el-popover trigger="hover" placement="top" popper-class="payout-popup">
                         <!-- <el-alert
                           title="消息提示的文案"
@@ -510,7 +562,7 @@
                       </el-popover>
                     </td>
                     <td>
-                      触发标准
+                      <h4>触发标准</h4>
                       <el-popover trigger="hover" placement="top" popper-class="payout-popup">
                         <!-- <el-alert
                           title="消息提示的文案"
@@ -529,25 +581,25 @@
                 </thead>
                 <tbody class="huge danger">
                   <tr>
-                    <td>￥ {{ computedPayoutRule[computedPayoutRule.length-1].fee }}</td>
-                    <td>{{contractInfo.threshold? `> ${contractInfo.threshold} mm`:''}}</td>
+                    <td>￥{{ computedPayoutRule[computedPayoutRule.length-1].fee }}</td>
+                    <td>{{contractInfo.threshold? `>${contractInfo.threshold} mm`:''}}</td>
                   </tr>
                 </tbody>
               </table>
             </div>
             <div class="date">
               <h4>保障时间</h4>
-              <p class="huge">{{formatDate(travel[0].date)}} - {{formatDate(travel[travel.length-1].date)}}</p>
+              <p class="">{{formatDate(travel[0].date)}} - {{formatDate(travel[travel.length-1].date)}}</p>
             </div>
             <div class="city">
               <h4>保障目的地个数</h4>
-              <p class="huge">
+              <p class="">
                 <span>{{computedCityLabels.length}}</span>
                 {{computedCityLabels.join('、')}}
               </p>
             </div>
             <div class="explain">
-              <h3>赔付标准</h3>
+              <h3><i class="el-icon-date"></i> 赔付标准</h3>
               <p>旅游行程中只要当天降水量超过触发标准，就认为这天触发。具体触发天数和赔付金额对应如下表。</p>
             </div>
             <div class="payout-standard">
@@ -602,7 +654,7 @@
             超时
           </template>
         </div>
-        <div class="info">
+        <!-- <div class="info"> -->
           <div class="travel">
             <div class="explain"><h3><i class="el-icon-date"></i> 旅行行程</h3></div>
             <ul>
@@ -643,8 +695,8 @@
                 </thead>
                 <tbody class="huge danger">
                   <tr>
-                    <td>￥ {{ computedPayoutRule[computedPayoutRule.length-1].fee }}</td>
-                    <td>{{contractInfo.threshold? `> ${contractInfo.threshold} mm`:''}}</td>
+                    <td>￥{{ computedPayoutRule[computedPayoutRule.length-1].fee }}</td>
+                    <td>{{contractInfo.threshold? `>${contractInfo.threshold} mm`:''}}</td>
                   </tr>
                 </tbody>
               </table>
@@ -667,37 +719,37 @@
               </div>
             </div>
           </div>
+        <!-- </div> -->
+        <div class="insured">
+          <div class="explain"><h3><i class="el-icon-date"></i> 被保人信息</h3></div>
+          <p class="huge danger">
+            {{easyerMobile}}
+          </p>
+          <p>{{insured.name}}</p>
+          <el-alert
+            v-if="process.name==='confirm'"
+            title="手机号填错了会导致赔付款无法到账，请再三确认。"
+            type="info"
+            show-icon
+            :closable="false"
+          ></el-alert>
         </div>
         <div class="tarrif">
-            <div class="explain"><h3><i class="el-icon-date"></i> 选择保费</h3></div>
+            <div class="explain"><h3><i class="el-icon-date"></i> 「保费」</h3></div>
             <div>
               <p class="huge danger">￥{{formatMoney(computedOrderPrice)}}</p>
               <p v-if="!coupon.isCollapsed && coupon.amount">&nbsp;优惠金额 -￥{{(coupon.amount)}}</p>
             </div>
             <el-alert
               v-if="process.name==='confirm'"
-              title="订单支付后保障即刻生效，无法取消或退款。"
-              type="warning"
+              title="订单提交后保障即刻生效，无法取消或退款。"
+              type="info"
               show-icon
               :closable="false"
             ></el-alert>
         </div>
-        <div class="insured">
-          <div class="explain"><h3><i class="el-icon-date"></i> 被保人信息</h3></div>
-          <p>{{insured.name}}</p>
-          <p class="huge danger">
-            {{insured.mobile}}
-          </p>
-          <el-alert
-            v-if="process.name==='confirm'"
-            title="手机号填错了会导致赔付款无法到账，请再三确认。"
-            type="warning"
-            show-icon
-            :closable="false"
-          ></el-alert>
-        </div>
         <div class="btns-confirm" v-if="process.name==='confirm'" style="text-align:center;">
-          <p class="huge">应支付：￥{{ formatMoney(computedPaymentFee) }}</p>
+          <p class="huge">应支付: ￥{{ formatMoney(computedPaymentFee) }}</p>
           <el-button @click="prevStep">上一步</el-button>
           <el-button type="primary" @click="nextStep(process.name)">提交</el-button>
         </div>
@@ -717,13 +769,12 @@
       <div class="info">
         <p><b>订单号：</b> {{orderInfo.outTradeNo}}</p>
         <p><b>保障人：</b> {{insured.name}} {{insured.mobile}}</p>
-        <p><b>保障地：</b> {{computedCities.map(c=>c.label).join('、')}}</p>
+        <p><b>保障地：</b> {{computedCityLabels.join('、')}}</p>
         <p><b>保障时间：</b> {{formatDate(travel[0].date,{separator:'-'})}} <b>至</b> {{formatDate(travel[travel.length-1].date,{separator:'-'})}}</p>
       </div>
       <div class="method">
         <h3>请选择以下支付方式
-          <span>剩余支付时间 <b ref="tqbPaymentCountdown" class="text-danger">00:09:12</b>, 逾期订单将自动取消
-          <b>订单成功支付后保障即刻生效，不得退货/退款</b></span>
+          <span>剩余支付时间 <b ref="tqbPaymentCountdown" class="text-danger">00:09:12</b>, 逾期订单将自动取消</span>
         </h3>
         <div>
           <h4>支付<b class="text-danger">￥{{formatMoney(computedPaymentFee)}}</b></h4>
@@ -737,6 +788,7 @@
               </el-radio>
             </el-radio-group>
           </div>
+          <b style="display:inline-block; margin-top:8px; font-size:12px;">订单成功支付后保障即刻生效，不能退货/退款</b>
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
@@ -776,12 +828,12 @@ export default {
       // 进度条
       process:{
         // state: wait/doing/done
-        index:0,
-        // name :'confirm',
-        name : 'safeguard',
+        index:1,
+        name :'confirm',
+        // name : 'safeguard',
         data : [
-          { name:'safeguard', text:'输入行程，保费和被保人' },
-          { name:'confirm',   text:'确认保障计划' },
+          { name:'safeguard', text:'输入信息' },
+          { name:'confirm',   text:'确认' },
           { name:'complete',  text:'完成' },
         ]
       },
@@ -792,7 +844,7 @@ export default {
         disabledDate:time=>{
           let dateTime = time.getTime(),
               nowTime  = Date.now(),
-              minLimit = this.production.leastDays * 86400000,
+              minLimit = this.production.acceptableDays * 86400000,
               maxLimit = this.production.maxBuyDays * 86400000;
           return (
                dateTime < nowTime + minLimit
@@ -814,7 +866,7 @@ export default {
         tarrif: 10,
         customEnable:false,
         custom:'',
-        data  : [10, 20, 50, 100]
+        data  : [10, 20, 50, 100, 200]
       },
       coupon: {
         isCollapsed:true,
@@ -890,14 +942,17 @@ export default {
           let temp = r.split(':');
           return { day:temp[0], fee:this.computedOrderPrice/100*temp[1] };
         }):
-        [];
+        [{}];
     },
     computedPaymentFee() {
-      return (
-        this.computedOrderPrice
+      let fee = ( this.computedOrderPrice
         // 减去优惠金额
-        - ( (this.coupon.isCollapsed? 0 : this.coupon.amount ) * 100 )
+        - ( (this.coupon.isCollapsed? 0 : this.coupon.amount||0 ) * 100 )
       );
+      return fee < 0? 0: fee;
+    },
+    easyerMobile() {
+      return this.insured.mobile.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
     }
   },
   methods: {
@@ -1268,7 +1323,7 @@ export default {
     if ( process.env.PATH_TYPE === 'development' ) {
       this.contractInfo = {"threshold": "10","contractId": "167812121","payoutRuleParam": "1:2|2:3" }
       this.travel = JSON.parse('[{"date":"2018-01-15","city":["t2000","t2100","t2101"]},{"date":"2018-1-16","city":["t2000","t2100","t2101"]},{"date":"2018-1-17","city":["t2000","t2100","t2101"]}]')
-      this.tarrifs=JSON.parse('{"tarrif":10,"custom":"","customEnable":false,"data":[10,20,50,100]}')
+      this.tarrifs=JSON.parse('{"tarrif":10,"custom":"","customEnable":false,"data":[10,20,50,100, 200]}')
       this.insured=JSON.parse('{"name":"名字","mobile":"13131313131"}')
     }
   },
