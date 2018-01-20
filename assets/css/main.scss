@@ -28,3 +28,9 @@ i  { font-style:normal; }
 .panel { padding:$common-gap; }
 
 .el-message__content { width:100%; padding-right:30px!important; }
+
+
+.el-button.passwordVisible { 
+  position:absolute; z-index:100; margin:0; padding:0; padding:0 14px; width:52px; height:52px; 
+  img { width:100%; }
+}

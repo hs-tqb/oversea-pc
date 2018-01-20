@@ -29,16 +29,25 @@
         // height:365px;
         font-size:14px; color:#666;
         background:#fff;
-        & > *:not(.el-input-group) { display:block; margin:15px 0; }
+        & > *:not(.el-input-group):not(.passwordVisible) { display:block; margin:15px 0; }
         h3 { margin:0; font-size:20px; font-weight:normal; text-align:center; }
         p { 
           text-align:right; 
           span {cursor: pointer;} 
         }
-        > button { margin:0; width:100%; }
+        > button:not(.passwordVisible) { margin:0; width:100%; }
         // .el-input-group input { width:auto; background:red !important; }
         .el-input.required:after { position:absolute; right:-15px; top:12px; color:$--color-danger; content:'*'; }
-
+        // .el-button.passwordVisible { 
+        //   position:absolute; z-index:100; margin:0; padding:0; padding:0 14px; width:52px; height:52px; 
+        //   img { width:100%; }
+        // }
+        &#login-form {
+          .el-button.passwordVisible { right:45px; top:152px; }
+        }
+        &#register-form {
+          .el-button.passwordVisible { right:45px; top:207px; }
+        }
       }
       #promise {
         position: absolute; top:265px;
@@ -67,6 +76,10 @@
         img { width:172px; }
       }
     }
+    .dialogChangePassword {
+      .el-dialog__body .el-input:not(:first-child) { margin-top:15px; }
+      .el-button.passwordVisible { right:15px; top:184px; }
+    }
   }
 </style>
 
@@ -86,18 +99,22 @@
           <el-input
             placeholder="用户名/手机号"
             :maxlength="11"
-            v-model.trim="username"
+            v-model.trim="login.username"
             clearable>
           </el-input>
           <el-input
-            type="password"
+            :type="login.passwordVisible?'text':'password'"
             placeholder="密码"
-            v-model.trim="password"
-            clearable>
+            v-model.trim="login.password"
+          >
           </el-input>
           <p><span @click="findPassword">忘记密码</span></p>
           <el-button type="success" @click="doLogin">登录</el-button>
           <el-button type="success" @click="task='register'" plain>注册</el-button>
+          <el-button type="text" class="passwordVisible" @click="login.passwordVisible = !login.passwordVisible">
+            <img src="~assets/img/icon-eye-opened.png" alt="" v-if="login.passwordVisible">
+            <img src="~assets/img/icon-eye-closed.png" alt="" v-else>
+          </el-button>
         </div>
         <div id="register-form" class="input-form" v-else-if="task='register'">
           <h3>注册帐号</h3>
@@ -114,16 +131,21 @@
             v-model.trim="register.verifyCode"
             clearable>
             <template slot="append">
-              <el-button @click="sendVFCode">{{vfcode.vfcodeText}}</el-button>
+              <el-button @click="sendVFCode('register')">
+                {{verifyCode.module==='register'?verifyCode.text:'验证码'}}
+              </el-button>
             </template>
           </el-input>
           <el-input
-            type="password"
+            :type="register.passwordVisible?'text':'password'"
             placeholder="密码"
             class="required"
-            v-model.trim="register.password"
-            clearable>
+            v-model.trim="register.password">
           </el-input>
+          <el-button type="text" class="passwordVisible" @click="register.passwordVisible = !register.passwordVisible">
+            <img src="~assets/img/icon-eye-opened.png" alt="" v-if="register.passwordVisible">
+            <img src="~assets/img/icon-eye-closed.png" alt="" v-else>
+          </el-button>
           <el-input
             placeholder="怎么称呼您(必填)"
             class="required"
@@ -167,12 +189,16 @@
         </div>
       </div>
     </div>
-    <el-dialog title="找回密码" :visible.sync="dialogChangePasswrod.show" width="398px">
+    <el-dialog title="找回密码" 
+      width="398px" class="dialogChangePassword"
+      :visible.sync="dialogChangePasswrod.show" 
+      @close="resetVfCodeConifig"
+      >
       <div class="input">
         <el-input placeholder="请输入手机号" :maxlength="11" v-model="dialogChangePasswrod.mobile"></el-input>
-        <el-input placeholder="短信验证码" v-model="dialogChangePasswrod.vfcode">
-          <el-button slot="append" @click="sendVFCode">
-            {{dialogChangePasswrod.vfcodeText}}
+        <el-input placeholder="短信验证码" v-model="dialogChangePasswrod.verifyCode">
+          <el-button slot="append" @click="sendVFCode('dialogChangePasswrod')">
+            {{verifyCode.module==='dialogChangePasswrod'?verifyCode.text:'验证码'}}
           </el-button>
         </el-input>
         <el-input 
@@ -180,16 +206,14 @@
           placeholder="新密码"
           v-model="dialogChangePasswrod.password"
         >
-          <template slot="append">
-            <el-button type="text" class="passwordVisible icon" @click="dialogChangePasswrod.passwordVisible = !dialogChangePasswrod.passwordVisible">
-              <img src="~assets/img/icon-eye-opened.png" alt="" v-if="dialogChangePasswrod.passwordVisible">
-              <img src="~assets/img/icon-eye-closed.png" alt="" v-else>
-            </el-button>
-          </template>
         </el-input>
+        <el-button type="text" class="passwordVisible icon" @click="dialogChangePasswrod.passwordVisible = !dialogChangePasswrod.passwordVisible">
+          <img src="~assets/img/icon-eye-opened.png" alt="" v-if="dialogChangePasswrod.passwordVisible">
+          <img src="~assets/img/icon-eye-closed.png" alt="" v-else>
+        </el-button>
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="doChangePassword" :disable="enableToChangePassword.result">确 定</el-button>
+        <el-button type="primary" @click="doChangePassword">确 定</el-button>
         <el-button @click="dialogChangePasswrod.show=false">取消</el-button>
       </div>
     </el-dialog>
@@ -204,10 +228,12 @@ export default {
   data() {
     return {
       version : version,
-      username:'',
-      password:'',
-
-      task:'register',
+      task:'login',
+      login: {
+        username:'',
+        password:'',
+        passwordVisible:false,
+      },
       register: {
         mobile:'',
         verifyCode  :'',
@@ -217,33 +243,24 @@ export default {
         inviteCode:'',
         passwordVisible:false
       },
-      vfcode: {
-        vfcodeText:'验证码',
-        vfcodeTimer:-1,
-        vfcodeCounting:false,
-        vfcodeCounter:60
-      },
       dialogChangePasswrod:{
-        show:true,
+        show:false,
         mobile:'',
-        vfcode:'',
-        vfcodeText:'验证码',
-        vfcodeTimer:'',
-        vfcodeCounter:60,
-        vfcodeCounting:false,
+        verifyCode:'',
         password:'',
         passwordVisible:false
       },
+      verifyCode: this.getDefaultVfCodeConfig(),
     }
   },
   methods: {
     doLogin() {
-      if ( !this.username || !this.password ) {
+      if ( !this.login.username || !this.login.password ) {
         return this.$alert( '帐号和密码不能为空');
       }
       this.$http.post('login', {
-        userName:this.username, 
-        password:this.password 
+        userName:this.login.username, 
+        password:this.login.password 
       })
       // 验证数据获取状态
       .then(resp=>{
@@ -304,29 +321,41 @@ export default {
       })
     },
     countdownVFCode() {
-      let d = this.vfcode;
-      d.vfcodeCounting = true;
-      if ( --d.vfcodeCounter === 0 ) {
-        d.vfcodeCounter = 60;
-        d.vfcodeTimer   = -1;
-        d.vfcodeText    = '验证码';
-        d.vfcodeCounting = false;
-        return;
+      let d = this.verifyCode;
+      d.counting = true;
+      if ( --d.counter === 0 ) {
+        return this.resetVfCodeConifig();
       }
-      d.vfcodeText = d.vfcodeCounter + 's后重新获取';
-      clearTimeout(d.vfcodeTimer);
-      d.vfcodeTimer = setTimeout(this.countdownVFCode, 1000);
+      d.text = d.counter + 's后重新获取';
+      clearTimeout(d.timer);
+      d.timer = setTimeout(this.countdownVFCode, 1000);
     },
-    sendVFCode() {
-      if ( this.vfcode.vfcodeCounting ) return;
-      let mobile = this.register.mobile;
+    getDefaultVfCodeConfig() {
+      return {
+        module:'',
+        text:'',
+        timer:-1,
+        counting:false,
+        counter:60
+      }
+    },
+    resetVfCodeConifig() {
+      console.log('reset');
+      clearTimeout( this.verifyCode.timer );
+      this.verifyCode = this.getDefaultVfCodeConfig();
+    },
+    sendVFCode(module) {
+      if ( this.verifyCode.counting ) return;
+      let mobile = this[module].mobile;
       if ( !this.checkMobileValidation(mobile) ) {
         this.$message.closeAll();
         return this.$message.error('手机号码错误');
       } 
+
       this.$http.post('GET_CODE', {mobile})
       .then(resp=>{
         this.countdownVFCode();
+        this.verifyCode.module = module;
       })
     },
     checkMobileValidation(m) {
@@ -339,17 +368,19 @@ export default {
       let d = this.dialogChangePasswrod, obj;
       if ( !this.checkMobileValidation(d.mobile) ) {
         obj = { result:false, text:'手机号码错误' }
-      } else if (!d.vfcode ) {
+      } else if (!d.verifyCode ) {
         obj = { result:false, text:'请输入验证码'}
       } else if ( !d.password) {
         obj = { result:false, text:'请输入新的密码'}
       }
+      console.log( obj );
       return obj || { result:true };
     },
     doChangePassword() {
-      if ( !this.enableToChangePassword.result ) {
+      let enableToChangePassword = this.enableToChangePassword();
+      if ( !enableToChangePassword.result ) {
         this.$message.closeAll();
-        this.$message.error(this.enableToChangePassword.text);
+        this.$message.error(enableToChangePassword.text);
         return;
       }
       let d = this.dialogChangePasswrod;
@@ -357,7 +388,7 @@ export default {
         mobile:d.mobile,
         newPassword:d.password,
         confirmassword:d.password,
-        verifyCode:d.vfcode
+        verifyCode:d.verifyCode
       })
       .then(resp=>{
         if ( resp.state === 1 ) {
@@ -370,8 +401,8 @@ export default {
   },
   mounted() {
     if ( process.env.NODE_ENV === 'development' ) {
-      this.username = '15914094691';
-      this.password = '111111';
+      this.login.username = '15914094691';
+      this.login.password = '111111';
     }
   }
 }

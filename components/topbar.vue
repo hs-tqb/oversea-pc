@@ -15,9 +15,7 @@
         position: relative;
         .el-input:not(:first-child) { margin-top:15px; }
         .passwordVisible { 
-          position: absolute; right:0; bottom:-3px; 
-          padding-left:10px; padding-right:10px;
-          img { width:25px; }
+          right:-2px; bottom:-6px;
         }
       }
       .notice {
