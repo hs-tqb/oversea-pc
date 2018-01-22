@@ -256,7 +256,8 @@ export default {
   methods: {
     doLogin() {
       if ( !this.login.username || !this.login.password ) {
-        return this.$alert( '帐号和密码不能为空');
+        this.$message.closeAll();
+        return this.$message.error( '帐号和密码不能为空');
       }
       this.$http.post('login', {
         userName:this.login.username, 
@@ -264,7 +265,7 @@ export default {
       })
       // 验证数据获取状态
       .then(resp=>{
-        console.log(resp);
+        // console.log(resp);
         if ( resp.state !== 1 ) {
           throw resp.message;
         }
@@ -400,10 +401,10 @@ export default {
     },
   },
   mounted() {
-    if ( process.env.NODE_ENV === 'development' ) {
-      this.login.username = '15914094691';
-      this.login.password = '111111';
-    }
+    // if ( process.env.NODE_ENV === 'development' ) {
+    //   this.login.username = '15914094691';
+    //   this.login.password = '111111';
+    // }
   }
 }
 </script>

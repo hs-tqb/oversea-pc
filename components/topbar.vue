@@ -160,6 +160,8 @@ export default {
         password:'',
         passwordVisible:false
       },
+      loadNoticesTimer:-1,
+      loadNoticesDelay:180000,
       dialogNotice: {
         show:false,
         qty:'',
@@ -197,6 +199,7 @@ export default {
         .then(resp=>{
           if ( resp.state === 1 ) {
             this.$message.success('退出成功');
+            clearTimeout(this.loadNoticesTimer);
             this.$router.push('/login');
           }
         })
@@ -259,6 +262,7 @@ export default {
         if ( resp.state === 1 ) {
           this.$message.closeAll();
           this.$message.success('修改成功, 请重新登录');
+          clearTimeout(this.loadNoticesTimer);
           this.$http.post('LOGOUT').then(resp=>{ this.$router.push('/login'); })
         }
       })
@@ -308,11 +312,11 @@ export default {
           d.data   = resp.data.list || [];
           d.unread = d.data.filter(n=>n.state===0);
           this.showUnreadNotice();
-          setTimeout(this.loadNotices, 180000);
+          this.loadNoticesTimer = setTimeout(this.loadNotices, this.loadNoticesDelay);
         }
       })
       .catch(err=>{
-        setTimeout(this.loadNotices, 180000);
+        this.loadNoticesTimer = setTimeout(this.loadNotices, this.loadNoticesDelay);
       })
     }
   },
@@ -328,9 +332,7 @@ export default {
       } else {
         this.loadNotices();
       }
-
     });
-
 
     window.dialogChangePasswrod = this.dialogChangePasswrod;
   }

@@ -39,7 +39,7 @@
           <!-- <template slot="prepend">订单号</template> -->
         </el-input>
         <span class="label">被保人手机：</span>
-        <el-input v-model="params.buyerMobile" size="small"  style="width:202px;">
+        <el-input v-model="params.buyerMobile" size="small" :maxlength="11"  style="width:202px;">
           <!-- <template slot="prepend">手机号</template> -->
         </el-input>
         <span class="label">下单日期：</span>
@@ -48,6 +48,7 @@
           type="datetimerange"
           size="small"
           :picker-options="datePickerOptions"
+          format="yyyy-MM-dd"
           range-separator="至"
           start-placeholder="开始日期"
           end-placeholder="结束日期"
