@@ -676,7 +676,7 @@
                   <tr>
                     <td>
                       最高保障金额
-                      <el-popover trigger="click" placement="top" popper-class="payout-popup">
+                      <el-popover placement="top" popper-class="payout-popup">
                         <span slot="reference"><i class="el-icon-question"></i></span>
                         <div>
                           <i class="el-icon-question"></i>文字文字
