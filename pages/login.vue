@@ -23,7 +23,7 @@
         strong, span { vertical-align:-1px; }
       }
       .input-form {
-        position:absolute; top:180px; right:0;
+        position:absolute; right:0;
         padding:40px 50px;
         width:400px; 
         // height:365px;
@@ -43,9 +43,11 @@
         //   img { width:100%; }
         // }
         &#login-form {
+          top:180px;
           .el-button.passwordVisible { right:45px; top:137px; }
         }
         &#register-form {
+          top:80px;
           .el-button.passwordVisible { right:45px; top:192px; }
         }
       }
