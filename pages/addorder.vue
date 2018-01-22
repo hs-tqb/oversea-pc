@@ -237,7 +237,8 @@
         //     padding:$common-gap;
         //   }
           .travel { 
-            min-width:370px; @include border('right'); 
+            min-width:370px; 
+            // @include border('right'); 
             ul { margin-right:100px; }
             li {
               white-space: nowrap;
