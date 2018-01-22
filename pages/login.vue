@@ -30,7 +30,7 @@
         font-size:14px; color:#666;
         background:#fff;
         & > *:not(.el-input-group):not(.passwordVisible) { display:block; margin:15px 0; }
-        h3 { margin:0; font-size:20px; font-weight:normal; text-align:center; }
+        h3 { margin-top:0 !important; font-size:20px; font-weight:normal; text-align:center; }
         p { 
           text-align:right; 
           span {cursor: pointer;} 
@@ -43,10 +43,10 @@
         //   img { width:100%; }
         // }
         &#login-form {
-          .el-button.passwordVisible { right:45px; top:152px; }
+          .el-button.passwordVisible { right:45px; top:137px; }
         }
         &#register-form {
-          .el-button.passwordVisible { right:45px; top:207px; }
+          .el-button.passwordVisible { right:45px; top:192px; }
         }
       }
       #promise {
