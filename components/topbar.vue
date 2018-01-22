@@ -328,7 +328,7 @@ export default {
       this.$store.commit('saveMerchantInfo', resp.data.merchantInfo);
 
       if ( this.merchantInfo.verifyState!==1 ) {
-        this.$route.redirect('/preview');
+        this.$router.replace('/preview');
       } else {
         this.loadNotices();
       }

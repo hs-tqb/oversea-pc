@@ -290,11 +290,7 @@ export default {
         })
         this.$store.commit('saveToken', data.token);
         this.$store.commit('saveProduction', data.productList[0]);
-        if ( history.length ) {
-          history.back();
-        } else {
-          this.$router.push('/');
-        }
+        this.$router.push('/');
       })
     },
     doRegister() {
