@@ -205,6 +205,9 @@
     </div>
     <el-dialog :visible.sync="orderDetail.show" top="50px" width="700px" title="订单详情" custom-class="dialog-orderDetail">
       <order-detail :orderId="orderDetail.orderId"></order-detail>
+      <div class="text-right">
+        <el-button @click="orderDetail.show=false">关 闭</el-button>
+      </div>
     </el-dialog>
     <el-dialog 
       :visible.sync="sendContractParams.show" 

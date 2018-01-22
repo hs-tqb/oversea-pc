@@ -814,6 +814,7 @@
     <!-- 订单详情 -->
     <el-dialog :visible.sync="orderDetail.show" top="50px" width="700px" title="订单详情" custom-class="dialog-orderDetail">
       <order-detail :orderId="orderDetail.orderId"></order-detail>
+      <el-button @click="orderDetail.show=false">关 闭</el-button>
     </el-dialog>
   </div>
 </template>
