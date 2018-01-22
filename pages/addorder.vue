@@ -936,20 +936,20 @@ export default {
     },
     computedOrderPrice() {
       // 优先使用(展开的)自定义的价格
-      return ( (this.tarrifs.customEnable && this.tarrifs.custom) || (this.tarrifs.tarrif) ) *100
+      return parseInt( ((this.tarrifs.customEnable&&this.tarrifs.custom)||this.tarrifs.tarrif) *100 )
     },
     computedPayoutRule() {
       return this.contractInfo.payoutRuleParam? 
         this.contractInfo.payoutRuleParam.split('|').map(r=>{
           let temp = r.split(':');
-          return { day:temp[0], fee:this.computedOrderPrice/100*temp[1] };
+          return { day:temp[0], fee:parseInt(this.computedOrderPrice/100*temp[1])};
         }):
         [{}];
     },
     computedPaymentFee() {
       let fee = ( this.computedOrderPrice
         // 减去优惠金额
-        - ( (this.coupon.isCollapsed? 0 : this.coupon.amount||0 ) * 100 )
+        - parseInt( (this.coupon.isCollapsed? 0 : this.coupon.amount||0 ) * 100 )
       );
       return fee < 0? 0: fee;
     },
