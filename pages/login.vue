@@ -94,7 +94,7 @@
           <br/>支持140+海外热门旅游城市，提供最长60天、
           <br/>最大金额￥10000/人的天气保障服务</p>
         </div>
-        <div id="login-form" class="input-form" v-if="task==='login'">
+        <div id="login-form" class="input-form" v-show="task==='login'">
           <h3>商家登录</h3>
           <el-input
             placeholder="用户名/手机号"
@@ -116,7 +116,7 @@
             <img src="~assets/img/icon-eye-closed.png" alt="" v-else>
           </el-button>
         </div>
-        <div id="register-form" class="input-form" v-else-if="task='register'">
+        <div id="register-form" class="input-form" v-show="task==='register'">
           <h3>注册帐号</h3>
           <el-input
             placeholder="用户名/手机号"
