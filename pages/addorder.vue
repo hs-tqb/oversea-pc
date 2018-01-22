@@ -830,9 +830,9 @@ export default {
       // 进度条
       process:{
         // state: wait/doing/done
-        index:1,
-        name :'confirm',
-        // name : 'safeguard',
+        index:0,
+        // name :'confirm',
+        name : 'safeguard',
         data : [
           { name:'safeguard', text:'输入信息' },
           { name:'confirm',   text:'确认' },
