@@ -1,7 +1,7 @@
 <style lang="scss">
   @import '~assets/css/base.scss';
   #page-query {
-    width:1600px;
+    min-width:1600px;
     .el-table,
     .el-table__body-wrapper, 
     .el-table__footer-wrapper, 
