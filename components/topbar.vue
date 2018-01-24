@@ -308,7 +308,7 @@ export default {
       this.$http.post('GET_NOTICE', {
         page:1,
         rows:99,
-        merchangId:this.merchantInfo.merchantId
+        merchantId:this.merchantInfo.merchantId
       })
       .then(resp=>{
         if ( resp.state===1 ) {

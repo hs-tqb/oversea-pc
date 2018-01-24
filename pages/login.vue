@@ -399,10 +399,10 @@ export default {
     },
   },
   mounted() {
-    // if ( process.env.NODE_ENV === 'development' ) {
-    //   this.login.username = '15914094691';
-    //   this.login.password = '111111';
-    // }
+    if ( process.env.PATY_TYPE === 'development' ) {
+      this.login.username = '15914094691';
+      this.login.password = '111111';
+    }
   }
 }
 </script>
