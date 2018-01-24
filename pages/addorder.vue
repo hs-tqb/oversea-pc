@@ -409,6 +409,7 @@
                   :disabled="i!==0"
                   format="yyyy-MM-dd"
                   value-format="yyyy-MM-dd"
+                  :default-value="defaultDateValue"
                   v-model="t.date"
                   :picker-options="dateOptions"
                   @change="datePicked($event, i)"
@@ -724,7 +725,7 @@
         <div class="insured">
           <div class="explain"><h3><i class="el-icon-date"></i> 被保人信息</h3></div>
           <p class="huge danger">
-            {{easyerMobile}}
+            {{formatPhoneNumber}}
           </p>
           <p>{{insured.name}}</p>
           <el-alert
@@ -859,7 +860,7 @@ export default {
         { date:'', city:[] },
         { date:'', city:[] },
         { date:'', city:[] }
-      ],
+        ],
       // 合约详情
       contractInfo: {},
       orderInfo   : {},
@@ -923,9 +924,19 @@ export default {
     }
   }, 
   computed: {
+    // 如果当前月份没有可选, 点开日历的时候显示下一个月
+    defaultDateValue() {
+      if ( this.production && this.production.acceptableDays ) {
+        let d = new Date();
+        d.setDate( d.getDate() + this.production.acceptableDays );
+        return d;
+      }
+    },
+    // 所有城市
     computedCities() {
       return this.travel.map(t=>this.getCity(t.city)).filter(c=>!!c);
     },
+    // 所有城市, 去重
     computedCityLabels() {
       let m = {};
       return this.computedCities.map(c=>{
@@ -934,10 +945,7 @@ export default {
         return c.label;
       }).filter(l=>!!l);
     },
-    computedOrderPrice() {
-      // 优先使用(展开的)自定义的价格
-      return parseInt( ((this.tarrifs.customEnable&&this.tarrifs.custom)||this.tarrifs.tarrif) *100 )
-    },
+    // 赔付规则
     computedPayoutRule() {
       return this.contractInfo.payoutRuleParam? 
         this.contractInfo.payoutRuleParam.split('|').map(r=>{
@@ -946,6 +954,12 @@ export default {
         }):
         [{}];
     },
+    // 最终使用的价格
+    computedOrderPrice() {
+      // 优先使用(展开的)自定义的价格
+      return parseInt( ((this.tarrifs.customEnable&&this.tarrifs.custom)||this.tarrifs.tarrif) *100 )
+    },
+    // 最终支付的价格(减去优惠)
     computedPaymentFee() {
       let fee = ( this.computedOrderPrice
         // 减去优惠金额
@@ -953,7 +967,7 @@ export default {
       );
       return fee < 0? 0: fee;
     },
-    easyerMobile() {
+    formatPhoneNumber() {
       return this.insured.mobile.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
     }
   },
@@ -1025,7 +1039,6 @@ export default {
       this.gotoStep(0);
     },
     datePicked(val, idx) {
-      console.log(val);
       if ( val ) {
         let date = new Date(val);
         this.travel.forEach((d,i)=>{
@@ -1281,14 +1294,8 @@ export default {
   },
   beforeMount() {
     // this.loadContractInfo()
-    // 读取城市数据
+    // 读取城市数据, 转换成ui组件支持的数据格式
     this.$http.post('getCitys')
-    //  this.$http({
-    //     // 设置请求可以携带cookie
-    //     withCredentials: true,
-    //     method: "post",
-    //     url: "http://ts.baotianqi.cn/sellerCity/getData"
-    //   })
       .then(resp=>{
         if ( resp.state !== 1 ) {
           this.cityOptions = [{ value:-1, label:'城市数据加载失败', disabled:true }];
@@ -1323,8 +1330,9 @@ export default {
 
   mounted() {
     if ( process.env.PATH_TYPE === 'development' ) {
+      // return
       this.contractInfo = {"threshold": "10","contractId": "167812121","payoutRuleParam": "1:2|2:3" }
-      this.travel = JSON.parse('[{"date":"2018-01-15","city":["t2000","t2100","t2101"]},{"date":"2018-1-16","city":["t2000","t2100","t2101"]},{"date":"2018-1-17","city":["t2000","t2100","t2101"]}]')
+      this.travel = JSON.parse('[{"date":"2018-03-15","city":["t2000","t2100","t2101"]},{"date":"2018-3-16","city":["t2000","t2100","t2101"]},{"date":"2018-3-17","city":["t2000","t2100","t2101"]}]')
       this.tarrifs=JSON.parse('{"tarrif":10,"custom":"","customEnable":false,"data":[10,20,50,100, 200]}')
       this.insured=JSON.parse('{"name":"名字","mobile":"13131313131"}')
     }

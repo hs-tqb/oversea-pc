@@ -20,6 +20,22 @@
 export default {
   data() {
     return {}
+  },
+  methods: {
+    getData() {
+      this.$http.post('GET_NOTICE')
+      .then( async (resp)=>{
+        let a = await this.getData2();
+      })
+    },
+    getData2() {
+      return this.$http.post('USER_INFO')
+    }
+  },
+  mounted() {
+    // console.log('zzzz');
+    this.getData();
+    // console.log('as')
   }
 }
 </script>
