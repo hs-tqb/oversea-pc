@@ -1330,7 +1330,6 @@ export default {
 
   mounted() {
     if ( process.env.PATH_TYPE === 'development' ) {
-      // return
       this.contractInfo = {"threshold": "10","contractId": "167812121","payoutRuleParam": "1:2|2:3" }
       this.travel = JSON.parse('[{"date":"2018-03-15","city":["t2000","t2100","t2101"]},{"date":"2018-3-16","city":["t2000","t2100","t2101"]},{"date":"2018-3-17","city":["t2000","t2100","t2101"]}]')
       this.tarrifs=JSON.parse('{"tarrif":10,"custom":"","customEnable":false,"data":[10,20,50,100, 200]}')

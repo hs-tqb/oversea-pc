@@ -305,7 +305,11 @@ export default {
     },
 
     loadNotices() {
-      this.$http.post('GET_NOTICE')
+      this.$http.post('GET_NOTICE', {
+        page:1,
+        rows:99,
+        merchangId:this.merchantInfo.merchantId
+      })
       .then(resp=>{
         if ( resp.state===1 ) {
           let d = this.dialogNotice;
