@@ -171,4 +171,6 @@ export default {
    * @param returnUrl     支付成功跳转url
    */
  , 'http://pay.baotianqi.cn/alipay/pay': 'payment/alipay'
+
+ , 'getHomeStatistics':'sellerMerchant/homeStatistics'
 }

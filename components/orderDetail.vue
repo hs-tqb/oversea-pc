@@ -1,7 +1,5 @@
 <style lang="scss">
-  // @import '~assets/css/base.scss';
   .comp-orderDetail {
-    // table { width:100%!important; }
     h3 { font-size:36px; }
     h4 { margin-top:20px; font-size:30px; }
     h3, h4 { margin-bottom:10px; line-height:1.2; font-weight:500; color:#317eac; }
@@ -142,19 +140,17 @@ export default {
       this.orderInfo = this.triggerInfo = null;
       // 需要3个接口的数据.....................
       Promise.all([
-        new Promise((res,rej)=>{
-          this.$http.post('FIND_ORDER', {innerOrderId:this.orderId}).then(resp=>res(resp))
-        }),
-        new Promise((res,rej)=>{
-          this.$http.post('FIND_ORDER_TRIGGER', {innerOrderId:this.orderId}).then(resp=>res(resp))
-        }),
-        new Promise((res,rej)=>{
-          this.$http.post('FIND_PAYOUT_RECORD', {innerOrderId:this.orderId}).then(resp=>res(resp))
-        })
+        this.$http.post('FIND_ORDER', {innerOrderId:this.orderId}),
+        this.$http.post('FIND_ORDER_TRIGGER', {innerOrderId:this.orderId}),
+        this.$http.post('FIND_PAYOUT_RECORD', {innerOrderId:this.orderId})
       ])
       .then(resps=>{
         // 如果有某个接口数据返回 state!==1, 则返回
-        if ( resps.some(r=>r.state!==1) ) return;
+        if ( resps.some(r=>r.state!==1) ) {
+          this.$message.closeAll();
+          this.$message.error(resps.filter(r=>r.state!==1)[0].message);
+          return;
+        }
         
         this.orderInfo = resps[0].data;
         this.triggerInfo = resps[1].data;
@@ -197,7 +193,6 @@ export default {
         });
     }
   },
-
   // 更新数据
   beforeUpdate() {
     if ( this.prevId && this.prevId!==this.orderId ) {
