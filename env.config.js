@@ -7,7 +7,7 @@ let config = {
     baseURL:'http://ts.baotianqi.cn/',
   },
   production: {
-    baseURL:'http://web.baotianqi.cn/',
+    baseURL:'http://ts.baotianqi.cn/',
   }
 }
 export default config[process.env.PATH_TYPE || process.env.NODE_ENV];
