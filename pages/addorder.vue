@@ -415,6 +415,7 @@
                   @change="datePicked($event, i)"
                   size="small"
                 ></el-date-picker>
+                <!-- expand-trigger="hover" -->
                 <el-cascader
                   class="city"
                   placeholder="试试搜索：新加坡"
@@ -924,6 +925,7 @@ export default {
     }
   }, 
   computed: {
+    
     // 如果当前月份没有可选, 点开日历的时候显示下一个月
     defaultDateValue() {
       if ( this.production && this.production.acceptableDays ) {

@@ -80,7 +80,9 @@
           </div>
           <canvas ref="mappCanvas" :width="mappCode.bgSize.width" :height="mappCode.bgSize.height"></canvas>
         </div>
-        <el-button type="primary" @click="downloadMAppCode">&nbsp;&nbsp;&nbsp;&nbsp;下载&nbsp;&nbsp;&nbsp;&nbsp;</el-button>
+        <el-button type="primary" @click="downloadMAppCode" v-if="mappCode.dataURL">
+          &nbsp;&nbsp;&nbsp;&nbsp;下载&nbsp;&nbsp;&nbsp;&nbsp;
+        </el-button>
       </div>
     </div>
     <el-dialog title="完善收款信息" :visible.sync="dialogBind.show" @close="resetDialogBindParams">
@@ -131,7 +133,7 @@ export default {
       dialogBind: this.getDefaultDialogBindParams(),
       wxUserInfo:null,
       mappCode: {
-        isBind  : 0,
+        isBind  : false,
         bgSize  : { width:420, height:584 },
         codeSize: { width:250, height:250 },
         offset  : { x:85, y:249 },
@@ -235,8 +237,13 @@ export default {
         // if ( ++loaded !== 2 ) return;
         context.drawImage(bg, 0, 0, bgSize.width, bgSize.height);
         context.drawImage(code, offset.x, offset.y, codeSize.width, codeSize.height);
-        console.log( ++loaded );
         this.mappCode.dataURL = this.$refs.mappCanvas.toDataURL('image/jpeg', 1);
+      };
+      bg.onerror = code.onerror = ()=>{
+        this.$message.error('获取二维码出错 ('+
+        `http://ts.baotianqi.cn/sellerMerchant/getWaferQrCode?token=${localStorage.token}` +
+        ') 请联系管理员'
+        );
       };
       code.src = `http://ts.baotianqi.cn/sellerMerchant/getWaferQrCode?token=${localStorage.token}`;
     },
@@ -252,6 +259,7 @@ export default {
     loadAccountData() {
       this.$http.post('MERCHANT_ACCOUNT_INFO')
       .then(resp=>{
+        if ( resp.state !== 1 ) return;
         this.accountInfo = resp.data;
         if ( resp.data.isBind ) {
           this.mappCode.isBind = true;

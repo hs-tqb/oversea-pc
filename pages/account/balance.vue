@@ -206,12 +206,12 @@ export default {
         let text = '';
         let type = 'success';
         if ( resp.state === 1 ) {
-          t = '尊敬的用户，您已成功发起提现申请，金额 '
+          text = '尊敬的用户，您已成功发起提现申请，金额 '
             + this.moneyFormatter( balance )
             + '。 天气宝审核通过后，提现款将在3个工作日内打款到您指定的账户。';
         } else {
           type = 'error'
-          t = '发起提现申请失败，请稍后再试';
+          text = '发起提现申请失败，请稍后再试';
         }
         this.$message[type](text);
       })

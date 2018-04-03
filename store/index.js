@@ -8,10 +8,10 @@ Vue.use(Vuex)
 
 const store = () => new Vuex.Store({
   state: {
-    isSidebarCollapsed: true,
+    isSidebarCollapsed: false,
     token       : '',
     production  : null,
-    merchantInfo: null,
+    merchantInfo: {},
   },
 
   mutations: {
@@ -33,13 +33,13 @@ const store = () => new Vuex.Store({
   },
   getters: {
     production (state) {
-      return (state.production=getLocalStorage('production'))
+      return getLocalStorage('production')
     },
     token (state) {
-      return (state.token=getLocalStorage('token', 'string'));
+      return getLocalStorage('token', 'string');
     },
     merchantInfo (state) {
-      return (state.merchantInfo=getLocalStorage('merchantInfo'));
+      return getLocalStorage('merchantInfo');
     }
   },
   actions: {

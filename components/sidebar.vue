@@ -55,17 +55,15 @@
           :index="`${i+1}`" 
         >
           <template slot="title">
-            <!-- {{item.link.indexOf($router.path)===0}} -->
-            {{$router.path}}
             <i :class="`el-icon-${item.icon}`"></i>
             <span slot="title">{{item.text}}</span>
           </template>
-          <el-menu-item-group>
+          <el-menu-item-group aria-expanded="false">
             <el-menu-item 
               v-for="(sItem,j) in item.children" 
               :key="`nav-${i}-${j}`" 
-              :index="item.link + sItem.link"
-              :class="$route.path===sItem.link?'is-active':''"
+              :index="sItem.path"
+              :class="$route.path===sItem.path?'is-active':''"
             >
               <i :class="`el-icon-${sItem.icon}`"></i>
               <span slot="title">{{sItem.text}}</span>
@@ -76,8 +74,8 @@
         <el-menu-item 
           v-else
           :key="`nav-${i}`"
-          :index="item.link"
-          :class="$route.path===item.link?'is-active':''"
+          :index="item.path"
+          :class="$route.path===item.path?'is-active':''"
         >
           <i :class="`el-icon-${item.icon}`"></i>
           <span slot="title">{{item.text}}</span>
@@ -93,19 +91,40 @@
     data() {
       return {
         navs:[
-          {icon:'more',  text:'首页', link:'/'},
-          {icon:'goods', text:'下单', link:'/addorder'},
-          {icon:'search', text:'查询订单', link:'/query'},
-          {icon:'date',  text:'我的账户', link:'/account', children:[
-            {icon:'date', text:'账户余额', link:'/balance'},
-            {icon:'date', text:'账户资料', link:'/profile'},
+          // {icon:'more',  text:'首页', path:'/'},
+          {icon:'goods', text:'下单', path:'/addorder'},
+          {icon:'search', text:'查询订单', path:'/query', },
+          {icon:'date',  text:'我的账户', path:'/account', expanded:true, children:[
+            {icon:'date', text:'账户余额', path:'/account/balance'},
+            {icon:'date', text:'账户资料', path:'/account/profile'},
           ]}
         ]
       };
     },
     computed: {
       defaultOpens() {
-        return ['4'];
+        let path = this.$route.path;
+
+        // 根据 path, 要么不展开, 要么只展开一个
+        // let idx  = 0;
+        // this.navs.some((n,i)=>{
+        //   return n.children && n.children.some(c=>{
+        //     return c.path === path;
+        //   }) && (idx=i);
+        // });
+        // return [String(idx+1)];
+
+        // 根据 expanded 和 path, 可能展开多个
+        let list = [];
+        this.navs.forEach((n,i)=>{
+          if ( 
+            n.expanded ||
+            (n.children && n.children.some(c=>c.path===path) )
+          ) {
+            list.push(String(i+1));
+          }
+        });
+        return list;
       },
       isSidebarCollapsed() {
         return this.$store.state.isSidebarCollapsed
@@ -113,13 +132,13 @@
     },
     methods: {
       handleOpen(key, keyPath) {
-        console.log(key, keyPath);
+        // console.log(key, keyPath);
       },
       handleClose(key, keyPath) {
-        console.log(key, keyPath);
+        // console.log(key, keyPath);
       },
-      navTo(link) {
-        console.log(link);
+      navTo(path) {
+        // console.log(path);
       }
     }
   }

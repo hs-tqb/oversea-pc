@@ -65,7 +65,6 @@ export default {
   },
   computed: {
     isSidebarCollapsed() {
-      console.log('')
       return this.$store.state.isSidebarCollapsed;
     }
   },
